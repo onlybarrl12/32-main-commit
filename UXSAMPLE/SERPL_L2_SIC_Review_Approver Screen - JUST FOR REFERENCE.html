@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SERPL Budget Portal - L2 SIC Review & Approve Prototype</title>
+<style>
+
+*{box-sizing:border-box}
+body{margin:0;background:#fafafa;color:#222;font-family:Arial,Helvetica,sans-serif;font-size:13px}
+.topline{height:3px;background:#24205f}
+.header{height:88px;background:#fff;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;padding:0 22%;gap:12px}
+.logo{width:35px;height:35px;border:1px solid #ddd;border-radius:50%;font-size:8px;font-weight:700;color:#064b8d;display:flex;align-items:center;justify-content:center;text-align:center}
+.brand b{display:block;color:#173d72;font-size:14px}.brand span{font-size:10px;color:#e66c25}
+.user{margin-left:auto;text-align:right;font-size:10px;color:#888}.user strong{display:block;color:#222;font-size:12px}
+.sign{margin-left:10px;border:1px solid #ddd;background:#fff;border-radius:5px;padding:7px 10px}
+.nav{height:38px;border-bottom:1px solid #e6e6e6;background:#fff;padding:0 22%;display:flex;align-items:center;gap:28px;color:#666;font-size:12px}.nav .active{color:#e66c25;font-weight:700}
+.page{width:950px;margin:auto;padding:22px 0 45px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}.head h1{font-size:17px;margin:0 0 4px}.head p{margin:0;color:#888;font-size:10px}
+.status{border:1px solid #ddd;border-radius:14px;padding:5px 12px;color:#777;font-size:10px}
+.card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:16px;margin-bottom:14px}
+.label{font-size:10px;color:#8b8b8b;margin-bottom:5px}.value{font-size:12px;font-weight:700}
+.eyebrow{font-size:10px;color:#856a58;font-weight:700;letter-spacing:.4px;margin-bottom:14px}
+.headergrid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px 35px}
+.info{margin-top:13px;padding:9px 11px;background:#fafafa;border-left:3px solid #e66c25;color:#777;font-size:10px}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sectiontitle{font-size:11px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.4px}
+.small{font-size:10px;color:#999}
+.categories{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.category{border:1px solid #ddd;border-radius:8px;padding:14px;cursor:pointer;min-height:91px;position:relative}
+.category:hover{border-color:#e98b59}.category.active{border:1.5px solid #e66c25;background:#fff8f3}
+.tick{position:absolute;right:10px;top:10px;width:18px;height:18px;border:1px solid #ddd;border-radius:50%;font-size:10px;text-align:center;line-height:17px;color:transparent}
+.category.active .tick{background:#e66c25;border-color:#e66c25;color:#fff}
+.icon{font-size:18px;margin-bottom:7px}.catname{font-size:13px;font-weight:700;margin-bottom:4px}.catdesc{font-size:10px;color:#888;line-height:1.4}
+.subpanel{display:none;margin-top:12px;padding:12px;border:1px solid #e4e4e4;background:#fafafa;border-radius:7px}.subpanel.show{display:block}
+.subgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.sub{background:#fff;border:1px solid #ddd;border-radius:5px;padding:9px;font-size:10px;font-weight:700;color:#555;cursor:pointer;text-align:center}
+.sub:hover{border-color:#e66c25}.sub.sel{border-color:#e66c25;background:#fff3eb;color:#c95720}
+.requirement{border:1px solid #ddd;border-radius:8px;margin-bottom:11px;overflow:hidden;background:#fff}
+.reqhead{background:#fafafa;border-bottom:1px solid #e6e6e6;padding:11px 12px;display:flex;align-items:center;justify-content:space-between}
+.reqtitle{font-size:12px;font-weight:700}.reqmeta{font-size:9px;color:#999;margin-top:3px}
+.actions{display:flex;gap:6px}.btn{border:1px solid #ddd;background:#fff;border-radius:5px;padding:7px 10px;font-size:10px;font-weight:700;cursor:pointer}.orange{background:#f26f21;color:#fff;border-color:#f26f21}.danger{color:#b33;border-color:#e7cccc}
+.reqbody{padding:12px}
+.fields{display:grid;grid-template-columns:1fr 1.8fr 1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+input,select,textarea{width:100%;border:1px solid #d9d9d9;border-radius:5px;padding:7px;font-size:10px;background:#fff;color:#333}
+textarea{min-height:46px;resize:vertical}
+.field label{display:block;font-size:9px;color:#777;margin-bottom:4px}
+.field.wide{grid-column:span 2}.field.full{grid-column:1/-1}
+.detailtable{width:100%;border-collapse:collapse;margin-top:9px}.detailtable th{background:#f8f8f8;color:#777;font-size:9px;text-align:left;border:1px solid #e2e2e2;padding:7px}.detailtable td{border:1px solid #e2e2e2;padding:6px;vertical-align:top}
+.totalbar{display:flex;justify-content:flex-end;gap:25px;background:#f7f7f7;padding:9px;margin-top:10px;font-size:10px;color:#777}.totalbar b{color:#222}
+.addbox{border:1px dashed #d6d6d6;border-radius:8px;padding:12px;text-align:center;color:#888;background:#fcfcfc;margin-top:10px}
+.addbox button{margin-top:7px}
+.summary{width:100%;border-collapse:collapse}.summary th,.summary td{border:1px solid #e2e2e2;padding:8px;font-size:10px}.summary th{background:#f8f8f8;color:#777;text-align:left}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:7px}.ok,.warn{padding:8px;border-radius:5px;font-size:10px}.ok{background:#f2faf4;color:#397248;border:1px solid #d8eadc}.warn{background:#fff9ee;color:#956c31;border:1px solid #f0e3c7}
+.footer{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid #eee}.toast{display:none;position:fixed;right:20px;bottom:20px;background:#333;color:#fff;padding:10px 14px;border-radius:5px;font-size:11px}
+@media(max-width:1000px){.header,.nav{padding-left:20px;padding-right:20px}.page{width:94%}.headergrid{grid-template-columns:repeat(2,1fr)}.subgrid{grid-template-columns:repeat(2,1fr)}}
+
+.review-overlay{display:none;position:fixed;inset:0;background:rgba(20,30,45,.38);z-index:100;overflow:auto;padding:30px 0}
+.review-modal{width:980px;max-width:94%;margin:auto;background:#fff;border-radius:10px;border:1px solid #ddd;box-shadow:0 18px 45px rgba(0,0,0,.18);overflow:hidden}
+.review-top{padding:15px 18px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between;align-items:flex-start}
+.review-top h2{font-size:16px;margin:0 0 4px}.review-top p{font-size:10px;color:#888;margin:0}
+.close{border:1px solid #ddd;background:#fff;border-radius:5px;padding:6px 10px;cursor:pointer}
+.review-body{padding:17px}
+.review-alert{background:#fff8ee;border:1px solid #f0dfc0;border-left:3px solid #e66c25;padding:10px 12px;font-size:10px;color:#765d38;margin-bottom:14px}
+.review-header{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.review-metric{border:1px solid #e1e1e1;border-radius:7px;padding:10px}.review-metric small{display:block;color:#888;font-size:9px}.review-metric b{display:block;margin-top:4px;font-size:13px}
+.review-section{border:1px solid #ddd;border-radius:8px;margin-bottom:12px;overflow:hidden}
+.review-section-head{background:#fafafa;padding:10px 12px;font-size:11px;font-weight:700;display:flex;justify-content:space-between}
+.review-section-body{padding:10px 12px}
+.review-table{width:100%;border-collapse:collapse}.review-table th,.review-table td{border:1px solid #e2e2e2;padding:7px;font-size:9px;vertical-align:top}.review-table th{background:#f8f8f8;color:#777;text-align:left}
+.review-total{display:flex;justify-content:flex-end;gap:24px;background:#f7f7f7;padding:10px;font-size:10px}.review-total b{font-size:13px;color:#222}
+.review-footer{padding:12px 17px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:8px}
+.confirm-box{display:none;background:#f4faf5;border:1px solid #d7eadb;border-radius:7px;padding:10px;font-size:10px;color:#397248;margin-bottom:12px}
+
+
+.queue{border:1px solid #ddd;border-radius:10px;margin-bottom:14px;overflow:hidden}
+.queueitem{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #eee;cursor:pointer}
+.queueitem:last-child{border-bottom:none}
+.queueitem.open{background:#fff8f3;border-left:3px solid #e66c25}
+.queueitem:hover{background:#fafafa}
+.qmeta b{display:block;font-size:12px;color:#222}
+.qmeta span{font-size:10px;color:#888}
+.qamt{font-size:13px;font-weight:700;color:#222;text-align:right}
+.qamt small{display:block;font-size:9px;color:#999;font-weight:400}
+.pill{border-radius:12px;padding:4px 10px;font-size:9px;font-weight:700;display:inline-block}
+.pill.pending{background:#fff3eb;color:#c95720;border:1px solid #f0d3bc}
+.pill.approved{background:#f2faf4;color:#397248;border:1px solid #d8eadc}
+.timeline{border-left:2px solid #e5e5e5;margin-left:8px;padding-left:16px}
+.tlitem{position:relative;padding-bottom:16px}
+.tlitem:last-child{padding-bottom:0}
+.tlitem::before{content:'';position:absolute;left:-21px;top:2px;width:10px;height:10px;border-radius:50%;background:#397248;border:2px solid #fff;box-shadow:0 0 0 1px #d8eadc}
+.tlitem.pending::before{background:#e66c25;box-shadow:0 0 0 1px #f0d3bc}
+.tlitem b{display:block;font-size:11px;color:#222}
+.tlitem span{font-size:10px;color:#888}
+.tlitem p{margin:3px 0 0;font-size:10px;color:#666}
+.remarksbox textarea{min-height:60px}
+.actionbar{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid #eee;margin-top:14px}
+.btn.green{background:#2f8f52;color:#fff;border-color:#2f8f52}
+.btn.amber{background:#fff;color:#b56a25;border-color:#f0d3bc}
+.review-table td.num,.review-table th.num{text-align:right}
+.viewbtn{background:#fff;border:1px solid #d8d8d8;color:#555;font-size:9px;padding:4px 10px;border-radius:5px;cursor:pointer}
+.viewbtn:hover{background:#f5f5f5;border-color:#c0c0c0}
+.detailrow td{background:#fbfbfb;padding:10px}
+
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<header class="header">
+  <div class="logo">Indian<br>Oil</div>
+  <div class="brand"><b>SERPL Budget Portal</b><span>South Eastern Region Pipelines</span></div>
+  <div class="user"><strong>station.incharge</strong>STATION IN-CHARGE</div>
+  <button class="sign">Sign out</button>
+</header>
+<nav class="nav"><span class="">Home</span><span class="">Create</span><span class="active">Approve</span><span class="">Reports</span></nav>
+
+<main class="page">
+<div class="head">
+  <div><h1>Approve Budget Request</h1><p>Review the consolidated Cost Centre package before taking action.</p></div>
+  <div class="status">Pending — Level 2 (SIC)</div>
+</div>
+
+<section class="card">
+<div class="eyebrow">Pending Approvals — Locations Under Your Charge</div>
+<div class="queue"><div class="queueitem open">
+  <div class="qmeta"><b>BM-2026-000142 — PHBPL_Paradip SBM (P5142)</b><span>Submitted by location.user</span></div>
+  <div class="qamt">₹114.01 L<small>Proposed BE FY 2027-28</small></div>
+  <span class="pill pending">PENDING — L2</span>
+</div></div>
+<div class="info">As Station In-Charge, you are the first approval level. Review each requirement, its reference and justification carefully before forwarding to the Base In-Charge.</div>
+</section>
+
+<section class="card">
+<div class="eyebrow">BUDGET HEADER — BM-2026-000142</div>
+<div class="headergrid">
+ <div><div class="label">Region</div><div class="value">SERPL</div></div>
+ <div><div class="label">Base</div><div class="value">Paradip</div></div>
+ <div><div class="label">Operating Location</div><div class="value">PHBPL_Paradip SBM</div></div>
+ <div><div class="label">Company Code</div><div class="value">9280</div></div>
+ <div><div class="label">Pipeline</div><div class="value">PHBPL</div></div>
+ <div><div class="label">Cost Centre</div><div class="value">P5142</div></div>
+ <div><div class="label">Financial Year</div><div class="value">RBE 2026-27 / BE 2027-28</div></div>
+ <div><div class="label">Request Number</div><div class="value">BM-2026-000142</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="sectiontitle" style="margin-bottom:12px">Financial Position — ₹ Lakh</div>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+ <div class="metric"><div class="label">Actual FY 2025-26</div><div class="value">₹120.50 L</div></div>
+ <div class="metric"><div class="label">Expense Till Q1 FY 2026-27</div><div class="value">₹32.40 L</div></div>
+ <div class="metric"><div class="label">Approved BE FY 2026-27</div><div class="value">₹105.00 L</div></div>
+ <div class="metric"><div class="label">RBE FY 2026-27</div><div class="value">₹112.00 L</div></div>
+ <div class="metric"><div class="label">Proposed BE FY 2027-28</div><div class="value" style="color:#c95720">₹114.01 L</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="sectionhead">
+  <div><div class="sectiontitle">Category Summary</div><div class="small">Click View to see full requirement detail, reference and justification for that category.</div></div>
+  <button class="btn" style="border-color:#2f8f52;color:#2f8f52" onclick="downloadDetailCsv()">⬇ Download Detailed Excel</button>
+</div>
+<table class="review-table">
+ <thead><tr><th>Category</th><th>Actual FY 2025-26</th><th>Approved BE FY 2026-27</th><th>Expense YTD FY 2026-27</th><th>RBE FY 2026-27</th><th>Proposed BE FY 2027-28</th><th>View</th></tr></thead>
+ <tbody>
+<tr>
+  <td>R&M</td>
+  <td class="num">₹118.00 L</td>
+  <td class="num">₹102.00 L</td>
+  <td class="num">₹31.50 L</td>
+  <td class="num">₹108.50 L</td>
+  <td class="num">₹110.00 L</td>
+  <td><button class="viewbtn" onclick="toggleCat('RM')" id="btn-RM">View</button></td>
+ </tr>
+ <tr class="detailrow" id="detail-RM" style="display:none">
+  <td colspan="7">
+   <table class="review-table" style="margin:6px 0 10px">
+    <thead><tr><th>Sub-head</th><th>Budget Head</th><th>Requirement</th><th>Work Type</th><th>Recurring / One-Time</th><th>Reference</th><th>Justification</th><th>Proposed BE</th></tr></thead>
+    <tbody>
+     <tr><td>Civil</td><td>1103 – Township Maintenance</td><td>Repair of boundary wall and internal roads damaged during monsoon</td><td>Existing Work Order</td><td>Recurring</td><td>WO/2026/114</td><td>Boundary wall damaged during monsoon; repair needed to maintain security perimeter</td><td class='num'>₹75.00 L</td></tr>
+     <tr><td>Civil</td><td>1106 – Others - Civil</td><td>Painting and waterproofing of station building</td><td>Previous Year Requirement</td><td>One-Time</td><td>Estimate/2026/08</td><td>Annual maintenance painting due as per facility upkeep schedule</td><td class='num'>₹35.00 L</td></tr>
+    </tbody>
+   </table>
+  </td>
+ </tr>
+<tr>
+  <td>Chemical</td>
+  <td class="num">₹1.50 L</td>
+  <td class="num">₹1.50 L</td>
+  <td class="num">₹0.40 L</td>
+  <td class="num">₹1.50 L</td>
+  <td class="num">₹1.22 L</td>
+  <td><button class="viewbtn" onclick="toggleCat('Chemical')" id="btn-Chemical">View</button></td>
+ </tr>
+ <tr class="detailrow" id="detail-Chemical" style="display:none">
+  <td colspan="7">
+   <table class="review-table" style="margin:6px 0 10px">
+    <thead><tr><th>Sub-head</th><th>Budget Head</th><th>Requirement</th><th>Work Type</th><th>Recurring / One-Time</th><th>Reference</th><th>Justification</th><th>Proposed BE</th></tr></thead>
+    <tbody>
+     <tr><td>Corrosion Inhibitor</td><td>Corrosion Inhibitor</td><td>Corrosion inhibitor dosing chemical</td><td>—</td><td>—</td><td>Chemical Master Rate (₹244.38/KGS)</td><td>Required for pipeline corrosion protection as per O&M schedule</td><td class='num'>₹1.22 L</td></tr>
+    </tbody>
+   </table>
+  </td>
+ </tr>
+<tr>
+  <td>Power & Fuel</td>
+  <td class="num">₹1.00 L</td>
+  <td class="num">₹1.50 L</td>
+  <td class="num">₹0.50 L</td>
+  <td class="num">₹2.00 L</td>
+  <td class="num">₹2.79 L</td>
+  <td><button class="viewbtn" onclick="toggleCat('PowerFuel')" id="btn-PowerFuel">View</button></td>
+ </tr>
+ <tr class="detailrow" id="detail-PowerFuel" style="display:none">
+  <td colspan="7">
+   <table class="review-table" style="margin:6px 0 10px">
+    <thead><tr><th>Sub-head</th><th>Budget Head</th><th>Requirement</th><th>Work Type</th><th>Recurring / One-Time</th><th>Reference</th><th>Justification</th><th>Proposed BE</th></tr></thead>
+    <tbody>
+     <tr><td>Electricity</td><td>Electricity</td><td>Grid power import for station operations</td><td>—</td><td>—</td><td>Based on FY26 consumption trend</td><td>Estimated based on current year power consumption pattern</td><td class='num'>₹2.79 L</td></tr>
+    </tbody>
+   </table>
+  </td>
+ </tr>
+<tr style="font-weight:700;background:#fafafa">
+  <td>TOTAL</td>
+  <td class="num">₹120.50 L</td>
+  <td class="num">₹105.00 L</td>
+  <td class="num">₹32.40 L</td>
+  <td class="num">₹112.00 L</td>
+  <td class="num">₹114.01 L</td>
+  <td></td>
+ </tr>
+ </tbody>
+</table>
+</section>
+
+<section class="card">
+<div class="sectiontitle" style="margin-bottom:12px">Approval History</div>
+<div class="timeline"><div class="tlitem "><b>Submitted — Location User</b><span>location.user · 12-Aug-2026</span><p>Consolidated request submitted for review — 4 line items across R&M, Chemical and Power & Fuel.</p></div><div class="tlitem pending"><b>Pending — STATION IN-CHARGE</b><span>Awaiting your action</span></div></div>
+</section>
+
+<section class="card">
+<div class="sectiontitle" style="margin-bottom:10px">Your Decision</div>
+<div class="remarksbox" style="margin-bottom:10px">
+ <div class="field"><label>Remarks (required for Return or Reject)</label><textarea id="remarks" placeholder="Add your remarks here..."></textarea></div>
+</div>
+<div class="info">On approval, this request moves to <b>Base In-Charge (BIC)</b>.</div>
+<div class="actionbar">
+ <button class="btn danger" onclick="act('Rejected')">Reject</button>
+ <button class="btn amber" onclick="act('Returned')">Return for Correction</button>
+ <button class="btn green" onclick="act('Approved')">Approve & Forward</button>
+</div>
+</section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+function toggleCat(id){
+  const row = document.getElementById('detail-'+id);
+  const btn = document.getElementById('btn-'+id);
+  const open = row.style.display !== 'none';
+  row.style.display = open ? 'none' : 'table-row';
+  btn.textContent = open ? 'View' : 'Hide';
+}
+function downloadDetailCsv(){
+  const rows = [
+  ["Category","Sub-head","Budget Head","Requirement","Work Type","Recurring / One-Time","Reference","Justification","Actual FY 2025-26","Approved BE FY 2026-27","Expense YTD FY 2026-27","RBE FY 2026-27","Proposed BE FY 2027-28"],
+  ["R&M","Civil","1103 – Township Maintenance","Repair of boundary wall and internal roads damaged during monsoon","Existing Work Order","Recurring","WO/2026/114","Boundary wall damaged during monsoon; repair needed to maintain security perimeter","118.00","102.00","31.50","108.50","75.00"],
+  ["R&M","Civil","1106 – Others - Civil","Painting and waterproofing of station building","Previous Year Requirement","One-Time","Estimate/2026/08","Annual maintenance painting due as per facility upkeep schedule","","","","","35.00"],
+  ["Chemical","Corrosion Inhibitor","Corrosion Inhibitor","Corrosion inhibitor dosing chemical","—","—","Chemical Master Rate (₹244.38/KGS)","Required for pipeline corrosion protection as per O&M schedule","1.50","1.50","0.40","1.50","1.22"],
+  ["Power & Fuel","Electricity","Electricity","Grid power import for station operations","—","—","Based on FY26 consumption trend","Estimated based on current year power consumption pattern","1.00","1.50","0.50","2.00","2.79"]
+  ];
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], {type: 'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'BM-2026-000142_Detailed_Requirements.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function act(action){
+  const remarks = document.getElementById('remarks').value.trim();
+  if((action==='Rejected'||action==='Returned') && !remarks){
+    alert('Remarks are required to Return or Reject a request.');
+    return;
+  }
+  const buttons = document.querySelectorAll('.actionbar button');
+  buttons.forEach(b=>b.disabled=true);
+  const t=document.getElementById('toast');
+  if(action==='Approved'){
+    t.textContent = 'Request approved and forwarded to Base In-Charge (BIC).';
+  } else if(action==='Returned'){
+    t.textContent = 'Request returned to Location User with your remarks.';
+  } else {
+    t.textContent = 'Request rejected. This is a terminal action.';
+  }
+  t.style.display='block';
+  document.querySelector('.status').textContent = action==='Approved' ? ('Forwarded to Base In-Charge (BIC)') : action;
+}
+</script>
+
+</body>
+</html>

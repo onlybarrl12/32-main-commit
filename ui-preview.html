@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Budget Mitra Portal — Preview</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config={theme:{extend:{
+ colors:{navy:{DEFAULT:'#312d73',dark:'#221f52',light:'#e8e7f3',muted:'#6b67a8'},
+ brorange:{DEFAULT:'#ec6519',dark:'#c8500f',light:'#fce9db'},
+ gold:{DEFAULT:'#e0a83b',light:'#faf1dc'},pos:'#059669',neg:'#e11d48',warn:'#d97706'},
+ fontFamily:{sans:['Inter','system-ui']},
+ boxShadow:{card:'0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.1)'}}}}
+</script>
+<style>
+ body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a;-webkit-font-smoothing:antialiased}
+ .tab{cursor:pointer;padding:10px 0}
+ .tab.active{color:#312d73;font-weight:600}
+ .tab.active::after{content:"";display:block;height:2.5px;background:#ec6519;border-radius:9px;margin-top:8px}
+ .tab::after{content:"";display:block;height:2.5px;background:transparent;margin-top:8px}
+ .num{font-variant-numeric:tabular-nums}
+ select,input{outline:none}
+ select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2394a3b8' stroke-width='2' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right .6rem center}
+</style>
+</head>
+<body class="min-h-screen">
+
+<header class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-sm">
+ <div class="h-1 bg-gradient-to-r from-navy via-navy to-brorange"></div>
+ <div class="max-w-[1180px] mx-auto px-6 h-16 flex items-center justify-between gap-4">
+  <div class="flex items-center gap-3">
+   <div class="flex items-center gap-2">
+    <svg width="34" height="34" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#fff" stroke="#e2e8f0"/><path d="M24 8c2 8-6 10-6 18a6 6 0 0012 0c0-4-3-6-3-10 4 3 7 6 7 11a11 11 0 11-22 0C16 18 22 14 24 8z" fill="#ec6519"/><circle cx="24" cy="30" r="3.5" fill="#312d73"/></svg>
+    <div class="leading-none"><div class="text-[15px] font-extrabold text-navy tracking-tight">IndianOil</div><div class="text-[8px] text-brorange font-semibold">THE ENERGY OF INDIA</div></div>
+   </div>
+   <span class="h-9 w-px bg-slate-200"></span>
+   <div class="flex items-center gap-2">
+    <svg width="30" height="30" viewBox="0 0 48 48"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5c451"/><stop offset="1" stop-color="#d0932a"/></linearGradient></defs><circle cx="24" cy="24" r="21" fill="url(#g)"/><path d="M13 30l7-7 5 4 9-11" fill="none" stroke="#7a5210" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 15h6v6" fill="none" stroke="#7a5210" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><text x="24" y="21" text-anchor="middle" font-size="13" font-weight="800" fill="#7a5210">₹</text></svg>
+    <div class="leading-tight"><div class="text-[15px] font-extrabold text-navy tracking-tight">Budget Mitra</div><div class="text-[10px] text-slate-500 font-medium">IOCL SERPL · Revenue Budget Portal</div></div>
+   </div>
+  </div>
+  <div class="flex items-center gap-4">
+   <div class="hidden md:flex items-center gap-2">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ec6519" stroke-width="1.6"><circle cx="15" cy="4.5" r="2" fill="#ec6519"/><path d="M4 21l4.5-6.5L12 17l2 4M8.5 14.5L6 10l6-3 3.5 2.5 3-1"/></svg>
+    <div class="leading-none"><div class="text-sm font-extrabold text-navy tracking-wide">SPRINT</div><div class="text-[8px] text-brorange font-semibold">A TRANSFORMATIONAL PROJECT</div></div>
+   </div>
+   <span class="hidden md:block h-8 w-px bg-slate-200"></span>
+   <button class="relative text-slate-400 hover:text-brorange"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg><span class="absolute -top-1 -right-1 h-4 min-w-[16px] px-1 rounded-full bg-neg text-white text-[10px] leading-4 text-center font-bold">2</span></button>
+   <div class="flex items-center gap-2"><div class="h-8 w-8 rounded-full bg-navy text-white grid place-items-center text-xs font-bold">AM</div><div class="text-right leading-tight"><div class="text-sm font-semibold text-slate-800">A. Mishra</div><div class="text-xs text-slate-500">Finance Dept</div></div></div>
+   <button class="text-xs font-semibold text-slate-700 border border-slate-300 rounded-lg px-3 py-1.5 hover:border-brorange hover:text-brorange">Sign out</button>
+  </div>
+ </div>
+ <nav class="max-w-[1180px] mx-auto px-6 flex gap-6 text-sm text-slate-500">
+  <a onclick="show('home')" id="tab-home" class="tab active">Home</a>
+  <a onclick="show('create')" id="tab-create" class="tab hover:text-slate-800">Create</a>
+  <a onclick="show('approve')" id="tab-approve" class="tab hover:text-slate-800">Approve</a>
+  <a onclick="show('reports')" id="tab-reports" class="tab hover:text-slate-800">Reports</a>
+  <a class="tab hover:text-slate-800">Masters</a>
+  <a class="tab hover:text-slate-800">Authorization</a>
+ </nav>
+</header>
+
+<main class="max-w-[1180px] mx-auto px-6 py-6">
+
+<!-- HOME -->
+<section id="v-home">
+ <div class="mb-5"><h1 class="text-2xl font-bold text-slate-900">Home</h1><p class="text-sm text-slate-500 mt-0.5">RBE 2026-27 · BE 2027-28</p></div>
+ <div class="bg-white rounded-xl border border-slate-200 shadow-card p-4 mb-5">
+  <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+   <label class="flex flex-col gap-1"><span class="text-xs font-medium text-slate-500">Region</span><input value="SERPL (Overall)" readonly class="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-500"></label>
+   <label class="flex flex-col gap-1"><span class="text-xs font-medium text-slate-500">Pipeline</span><select class="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm"><option>All</option><option>PHPL</option></select></label>
+   <label class="flex flex-col gap-1"><span class="text-xs font-medium text-slate-500">Base / LOC</span><select class="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm"><option>All</option><option>Paradip</option></select></label>
+   <label class="flex flex-col gap-1"><span class="text-xs font-medium text-slate-500">Operating Location</span><select class="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm"><option>All</option></select></label>
+   <label class="flex flex-col gap-1"><span class="text-xs font-medium text-slate-500">Financial Year</span><select class="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm"><option>RBE 2026-27 · BE 2027-28</option></select></label>
+  </div>
+  <div class="flex gap-2 mt-3"><button class="rounded-lg bg-brorange px-4 h-9 text-sm font-semibold text-white hover:bg-brorange-dark">Search</button><button class="rounded-lg border border-slate-300 px-4 h-9 text-sm font-medium text-slate-700 hover:bg-slate-50">Reset</button></div>
+ </div>
+ <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6" id="kpis"></div>
+ <div class="grid lg:grid-cols-2 gap-5 mb-6">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-card p-5"><h3 class="text-sm font-semibold text-slate-700 mb-4">Budget Overview <span class="text-slate-400 font-normal">(Lakh)</span></h3><div id="ov" class="space-y-3"></div></div>
+  <div class="bg-white rounded-xl border border-slate-200 shadow-card p-5"><h3 class="text-sm font-semibold text-slate-700 mb-4">Budget Head-wise Comparison <span class="text-slate-400 font-normal">(Lakh)</span></h3><div id="cmp" class="flex items-end justify-between gap-3 h-52"></div></div>
+ </div>
+ <div class="bg-white rounded-xl border border-slate-200 shadow-card p-5">
+  <h3 class="text-sm font-semibold text-slate-700 mb-3">Budget Head-wise Summary <span class="text-slate-400 font-normal">(Lakh)</span></h3>
+  <div class="overflow-x-auto"><table class="w-full text-sm">
+   <thead><tr class="text-left text-xs text-slate-500 bg-slate-50 border-y border-slate-100"><th class="px-3 py-2.5 font-semibold">Budget Head</th><th class="px-3 py-2.5 font-semibold text-right">LY Actual</th><th class="px-3 py-2.5 font-semibold text-right">Approved BE</th><th class="px-3 py-2.5 font-semibold text-right">Proposed RBE</th><th class="px-3 py-2.5 font-semibold text-right">Difference</th></tr></thead>
+   <tbody id="sumRows"></tbody><tfoot id="sumFoot"></tfoot></table></div>
+ </div>
+</section>
+
+<!-- CREATE -->
+<section id="v-create" class="hidden">
+ <div class="mb-5"><h1 class="text-2xl font-bold text-slate-900">Create Budget</h1><p class="text-sm text-slate-500 mt-0.5">P5142 — Paradip Marine · RBE 2026-27 · BE 2027-28 · <span class="text-warn font-medium">Draft</span></p></div>
+ <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5" id="ckpis"></div>
+ <div class="bg-white rounded-xl border border-slate-200 shadow-card p-5 mb-5">
+  <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-700">Add Line Item</h3><span class="text-xs text-slate-400">R&amp;M · Material + Service</span></div>
+  <div class="grid sm:grid-cols-6 gap-3">
+   <label class="sm:col-span-2 flex flex-col gap-1"><span class="text-xs font-medium text-slate-500">Budget Sub Head</span><select class="h-10 rounded-lg border border-slate-300 px-3 text-sm"><option>1103 — Building Maintenance</option><option>1108 — Road &amp; Drainage</option></select></label>
+   <label class="flex flex-col gap-1"><span class="text-xs font-medium text-slate-500">Work Type</span><select class="h-10 rounded-lg border border-slate-300 px-3 text-sm"><option>Recurring</option><option>Approved PR</option></select></label>
+   <label class="flex flex-col gap-1"><span class="text-xs font-medium text-slate-500">RBE Material</span><input class="h-10 rounded-lg border border-slate-300 px-3 text-sm num" placeholder="0"></label>
+   <label class="flex flex-col gap-1"><span class="text-xs font-medium text-slate-500">RBE Service</span><input class="h-10 rounded-lg border border-slate-300 px-3 text-sm num" placeholder="0"></label>
+   <div class="flex items-end"><button class="w-full h-10 rounded-lg bg-brorange text-white text-sm font-semibold hover:bg-brorange-dark">+ Add</button></div>
+  </div>
+ </div>
+ <div class="bg-white rounded-xl border border-slate-200 shadow-card p-5">
+  <h3 class="text-sm font-semibold text-slate-700 mb-3">Line Items</h3>
+  <div class="overflow-x-auto"><table class="w-full text-sm">
+   <thead><tr class="text-left text-xs text-slate-500 bg-slate-50 border-y border-slate-100"><th class="px-3 py-2.5 font-semibold">Sub Head</th><th class="px-3 py-2.5 font-semibold">Work Type</th><th class="px-3 py-2.5 font-semibold text-right">RBE Mat</th><th class="px-3 py-2.5 font-semibold text-right">RBE Svc</th><th class="px-3 py-2.5 font-semibold text-right">RBE Total</th><th class="px-3 py-2.5 font-semibold text-right">BE Total</th><th></th></tr></thead>
+   <tbody id="createRows"></tbody></table></div>
+  <div class="flex justify-end gap-2 mt-4"><button class="rounded-lg border border-slate-300 px-4 h-9 text-sm font-medium text-slate-700 hover:bg-slate-50">Save Draft</button><button class="rounded-lg bg-brorange px-4 h-9 text-sm font-semibold text-white hover:bg-brorange-dark">Submit for Approval</button></div>
+ </div>
+</section>
+
+<!-- APPROVE -->
+<section id="v-approve" class="hidden">
+ <div class="grid lg:grid-cols-5 gap-5">
+  <div class="lg:col-span-2 space-y-3">
+   <div class="flex items-baseline justify-between"><h2 class="text-lg font-bold text-slate-900">Approve Budget</h2><span class="text-xs text-slate-400">Pending (3)</span></div>
+   <div id="pend" class="space-y-3"></div>
+  </div>
+  <div class="lg:col-span-3">
+   <div class="bg-white rounded-xl border border-slate-200 shadow-card p-5 space-y-5">
+    <div class="flex items-start justify-between">
+     <div><div class="text-base font-bold text-slate-900">P5142 — Paradip Marine</div><div class="text-xs text-slate-500">RBE 2026-27 · BE 2027-28</div></div>
+     <div class="text-right space-y-1"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset bg-brorange-light text-brorange-dark ring-brorange/30">Pending Finance Approval</span><div class="text-sm font-semibold text-navy num">₹1,610.00 / ₹1,750.00 L</div></div>
+    </div>
+    <ol class="flex items-center gap-1 overflow-x-auto py-1" id="step"></ol>
+    <div><h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Financial Position — ₹ Lakh</h3><div class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="fin"></div></div>
+    <div>
+     <div class="flex items-center justify-between mb-2"><h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Category Summary</h3><button class="text-xs font-semibold text-navy border border-navy-light rounded-lg px-3 py-1 hover:bg-navy-light">⬇ CSV</button></div>
+     <div class="overflow-x-auto border border-slate-200 rounded-lg"><table class="w-full text-xs">
+      <thead class="text-left text-slate-500 bg-slate-50 border-b border-slate-100"><tr><th class="px-4 py-2 font-semibold">Budget Head</th><th class="px-4 py-2 font-semibold text-right">LY Act</th><th class="px-4 py-2 font-semibold text-right">Appr BE</th><th class="px-4 py-2 font-semibold text-right">RBE</th><th class="px-4 py-2 font-semibold text-right">BE</th><th class="px-4 py-2 font-semibold text-center">Items</th><th class="px-4 py-2 font-semibold text-center">View</th></tr></thead>
+      <tbody id="cat"></tbody>
+      <tfoot><tr class="border-t-2 border-slate-200 bg-slate-50 font-semibold text-slate-700"><td class="px-4 py-2">Total</td><td class="px-4 py-2 text-right num">420.00</td><td class="px-4 py-2 text-right num">460.00</td><td class="px-4 py-2 text-right num text-navy">1,610.00</td><td class="px-4 py-2 text-right num text-navy">1,750.00</td><td class="px-4 py-2 text-center num">7</td><td></td></tr></tfoot>
+     </table></div>
+    </div>
+    <form class="border-t border-slate-100 pt-4 space-y-3" onsubmit="return false">
+     <label class="text-xs font-medium text-slate-500 block mb-1">Remarks</label>
+     <textarea rows="2" placeholder="Add a comment (required for Return)" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-1 focus:ring-brorange focus:border-brorange"></textarea>
+     <div class="flex gap-2 justify-end"><button class="text-sm font-semibold text-neg border border-neg/40 rounded-lg px-4 py-1.5 hover:bg-rose-50">Return to L1</button><button class="text-sm font-semibold text-white bg-brorange rounded-lg px-4 py-1.5 hover:bg-brorange-dark">Approve &amp; Forward</button></div>
+    </form>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- REPORTS -->
+<section id="v-reports" class="hidden">
+ <div class="mb-4"><h1 class="text-2xl font-bold text-slate-900">Reports</h1></div>
+ <div class="flex gap-2 flex-wrap mb-4" id="rtabs"></div>
+ <div class="bg-white rounded-xl border border-slate-200 shadow-card p-5 overflow-x-auto">
+  <h3 class="text-sm font-semibold text-slate-700 mb-3">R&amp;M — Fund-wise Report <span class="text-slate-400 font-normal">(Lakh)</span></h3>
+  <table class="w-full text-sm"><thead><tr class="text-left text-xs text-slate-500 bg-slate-50 border-y border-slate-100"><th class="px-3 py-2.5 font-semibold">Cost Centre</th><th class="px-3 py-2.5 font-semibold">Budget Head</th><th class="px-3 py-2.5 font-semibold">Sub Head</th><th class="px-3 py-2.5 font-semibold text-right">LY Act</th><th class="px-3 py-2.5 font-semibold text-right">RBE</th><th class="px-3 py-2.5 font-semibold text-right">BE</th></tr></thead><tbody id="repRows"></tbody></table>
+ </div>
+</section>
+
+</main>
+
+<script>
+const L=v=>v.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const kpis=[['LY Actual','FY 25-26',1240,'#312d73','Admin Maintained'],['Approved BE','FY 26-27',1800,'#ec6519','Admin Maintained'],['Proposed RBE','FY 26-27',1720,'#e0a83b','Location User Entry'],['YTD Actual','FY 26-27',960,'#d97706','Admin Maintained'],['Proposed BE','FY 27-28',2050,'#059669','Location User Entry']];
+const kpiHtml=a=>a.map(k=>`<div class="relative bg-white rounded-xl border border-slate-200 shadow-card p-4 overflow-hidden"><span class="absolute top-0 left-0 right-0 h-1" style="background:${k[3]}"></span><div class="flex items-center justify-between mt-1"><span class="text-xs font-medium text-slate-500">${k[0]}</span><span class="text-[10px] font-medium text-slate-500 bg-slate-100 rounded px-1.5 py-0.5">${k[1]}</span></div><div class="text-lg font-bold text-navy num mt-2">₹${L(k[2])} L</div><div class="text-[11px] text-slate-400 mt-0.5">${k[4]}</div></div>`).join('');
+document.getElementById('kpis').innerHTML=kpiHtml(kpis);
+document.getElementById('ckpis').innerHTML=kpiHtml(kpis);
+const ov=[['LY Actual',1240,'#312d73'],['Approved BE',1800,'#ec6519'],['Proposed RBE',1720,'#e0a83b'],['YTD Actual',960,'#d97706'],['Proposed BE',2050,'#059669']];
+const mx=Math.max(...ov.map(o=>o[1]));
+document.getElementById('ov').innerHTML=ov.map(o=>`<div class="flex items-center gap-3"><span class="w-28 text-right text-xs text-slate-500">${o[0]}</span><div class="flex-1 bg-slate-100 rounded-full h-5 overflow-hidden"><div class="h-full rounded-full" style="width:${o[1]/mx*100}%;background:${o[2]}"></div></div><span class="w-14 text-right text-xs font-semibold num text-slate-700">${o[1]}</span></div>`).join('');
+const cmp=[['Mainline',300,380,420],['Mechanical',480,520,560],['Electrical',260,300,340],['Civil',180,210,240],['Instr.',140,160,190]];
+const cmax=Math.max(...cmp.flatMap(c=>c.slice(1)));
+document.getElementById('cmp').innerHTML=cmp.map(c=>`<div class="flex-1 flex flex-col items-center gap-1"><div class="flex items-end gap-1 h-40">${[[c[1],'#312d73'],[c[2],'#ec6519'],[c[3],'#e0a83b']].map(b=>`<div class="w-3 rounded-t" style="height:${b[0]/cmax*100}%;background:${b[1]}"></div>`).join('')}</div><span class="text-[10px] text-slate-500">${c[0]}</span></div>`).join('');
+const sum=[['Mainline',180,200,190],['Mechanical',240,260,255],['Electrical',120,140,130],['Civil',90,110,100],['Instrumentation',70,90,85]];
+document.getElementById('sumRows').innerHTML=sum.map(r=>{const d=r[2]-r[3];return `<tr class="border-b border-slate-50 hover:bg-slate-50"><td class="px-3 py-2 font-medium text-slate-800">${r[0]}</td><td class="px-3 py-2 text-right num text-slate-600">${L(r[1])}</td><td class="px-3 py-2 text-right num text-slate-600">${L(r[2])}</td><td class="px-3 py-2 text-right num text-slate-700">${L(r[3])}</td><td class="px-3 py-2 text-right num font-medium" style="color:${d<0?'#e11d48':'#059669'}">${L(d)}</td></tr>`}).join('');
+const tt=sum.reduce((a,r)=>[a[0]+r[1],a[1]+r[2],a[2]+r[3]],[0,0,0]);
+document.getElementById('sumFoot').innerHTML=`<tr class="border-t border-slate-200 font-bold text-navy"><td class="px-3 py-2.5">Total</td><td class="px-3 py-2.5 text-right num">${L(tt[0])}</td><td class="px-3 py-2.5 text-right num">${L(tt[1])}</td><td class="px-3 py-2.5 text-right num">${L(tt[2])}</td><td class="px-3 py-2.5 text-right num" style="color:${(tt[1]-tt[2])<0?'#e11d48':'#059669'}">${L(tt[1]-tt[2])}</td></tr>`;
+const cr=[['1103 — Building Maintenance','Recurring',60,12,72,86],['1108 — Road & Drainage','Approved PR',40,8,48,58],['1201 — Pump Overhaul','Existing WO',88,0,88,95]];
+document.getElementById('createRows').innerHTML=cr.map(r=>`<tr class="border-b border-slate-50 hover:bg-slate-50"><td class="px-3 py-2 text-slate-800">${r[0]}</td><td class="px-3 py-2 text-slate-500">${r[1]}</td><td class="px-3 py-2 text-right num text-slate-600">${L(r[2])}</td><td class="px-3 py-2 text-right num text-slate-600">${L(r[3])}</td><td class="px-3 py-2 text-right num font-medium text-navy">${L(r[4])}</td><td class="px-3 py-2 text-right num font-medium text-navy">${L(r[5])}</td><td class="px-3 py-2 text-right"><button class="text-neg hover:underline text-xs">Remove</button></td></tr>`).join('');
+const pend=[['P5142','Paradip Marine','Pending Finance','#fce9db','#c8500f',true],['P5148','Paradip POL','Pending TS','#e8e7f3','#312d73',false],['V3101','Vijayawada','Pending BIC','#e8e7f3','#312d73',false]];
+document.getElementById('pend').innerHTML=pend.map(p=>`<div class="rounded-xl border ${p[5]?'border-brorange ring-2 ring-brorange/20':'border-slate-200 hover:border-slate-300'} bg-white p-3 cursor-pointer"><div class="flex items-center justify-between mb-1"><span class="text-xs font-mono text-slate-400">${p[0]}</span><span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold" style="background:${p[3]};color:${p[4]}">${p[2]}</span></div><div class="text-sm font-medium text-slate-800">${p[1]}</div><div class="text-xs text-slate-500 mb-2">RBE 2026-27 · BE 2027-28</div><div class="flex items-center justify-between text-xs"><span class="text-slate-400">RBE / BE</span><span class="font-semibold text-navy num">₹1,610 / ₹1,750 L</span></div></div>`).join('');
+const st=[['Submitted',1],['SIC',1],['BIC',1],['TS Dept',1],['Finance',2],['Approved',0]];
+document.getElementById('step').innerHTML=st.map((s,i)=>`<li class="flex items-center gap-1 shrink-0"><span class="h-6 w-6 grid place-items-center rounded-full text-[10px] font-bold ${s[1]==1?'bg-navy text-white':s[1]==2?'bg-brorange text-white':'bg-slate-200 text-slate-500'}">${s[1]==1?'✓':i+1}</span><span class="text-[11px] ${s[1]==2?'font-semibold text-brorange':'text-slate-500'}">${s[0]}</span>${i<st.length-1?`<span class="mx-1 h-px w-6 ${s[1]==1?'bg-navy':'bg-slate-200'}"></span>`:''}</li>`).join('');
+const fin=[['LY Actual','420.00',0],['Approved BE','460.00',0],['YTD Actual','300.00',0],['RBE','1,610.00',1],['BE','1,750.00',1]];
+document.getElementById('fin').innerHTML=fin.map(f=>`<div class="rounded-lg border p-3 ${f[2]?'border-brorange/30 bg-brorange-light/50':'border-slate-200 bg-white'}"><div class="text-[11px] text-slate-500">${f[0]}</div><div class="text-sm font-bold num mt-0.5 ${f[2]?'text-brorange-dark':'text-slate-900'}">₹${f[1]}</div></div>`).join('');
+const cat=[['Civil','R&M',90,110,100,120,3],['Mechanical','R&M',240,260,700,760,3],['Power & Fuel','Power',60,70,650,700,1]];
+document.getElementById('cat').innerHTML=cat.map((c,i)=>`<tr class="border-b border-slate-50"><td class="px-4 py-2 text-slate-700">${c[0]} <span class="text-slate-300">(${c[1]})</span></td><td class="px-4 py-2 text-right num text-slate-500">${L(c[2])}</td><td class="px-4 py-2 text-right num text-slate-500">${L(c[3])}</td><td class="px-4 py-2 text-right num font-medium text-navy">${L(c[4])}</td><td class="px-4 py-2 text-right num font-medium text-navy">${L(c[5])}</td><td class="px-4 py-2 text-center num text-slate-400">${c[6]}</td><td class="px-4 py-2 text-center"><button onclick="tg(${i})" id="vb${i}" class="text-xs font-semibold text-slate-600 border border-slate-200 rounded-md px-2.5 py-1 hover:bg-slate-50">View</button></td></tr><tr id="dd${i}" class="hidden bg-slate-50/60"><td colspan="7" class="p-3"><table class="w-full text-xs bg-white border border-slate-200 rounded-lg"><thead class="text-left text-slate-500 bg-slate-50 border-b border-slate-100"><tr><th class="px-3 py-2">Sub Head</th><th class="px-3 py-2">Work Type</th><th class="px-3 py-2 text-right">RBE</th><th class="px-3 py-2 text-right">BE</th></tr></thead><tbody><tr class="border-b border-slate-50"><td class="px-3 py-2">1103 — Building Maintenance</td><td class="px-3 py-2 text-slate-500">Recurring</td><td class="px-3 py-2 text-right num text-navy">60.00</td><td class="px-3 py-2 text-right num text-navy">72.00</td></tr><tr><td class="px-3 py-2">1108 — Road & Drainage</td><td class="px-3 py-2 text-slate-500">Approved PR</td><td class="px-3 py-2 text-right num text-navy">40.00</td><td class="px-3 py-2 text-right num text-navy">48.00</td></tr></tbody></table></td></tr>`).join('');
+function tg(i){const d=document.getElementById('dd'+i),b=document.getElementById('vb'+i);b.textContent=d.classList.toggle('hidden')?'View':'Hide';}
+const rt=['Summary','R&M Fund-wise','R&M Compiled','Power & Fuel','Chemical','Cost Centre Status'];
+document.getElementById('rtabs').innerHTML=rt.map((t,i)=>`<button class="text-xs font-medium rounded-lg px-3 py-1.5 border ${i==1?'bg-navy text-white border-navy':'border-slate-300 text-slate-600 hover:bg-slate-50'}">${t}</button>`).join('');
+const rep=[['P5142','Civil','1103 Building Maint.',60,100,120],['P5142','Mechanical','1201 Pump Overhaul',88,700,760],['P5148','Electrical','1305 HT Panel AMC',40,130,140],['V3101','Civil','1108 Road & Drainage',22,50,58]];
+document.getElementById('repRows').innerHTML=rep.map(r=>`<tr class="border-b border-slate-50 hover:bg-slate-50"><td class="px-3 py-2 font-mono text-slate-500">${r[0]}</td><td class="px-3 py-2 text-slate-700">${r[1]}</td><td class="px-3 py-2 text-slate-600">${r[2]}</td><td class="px-3 py-2 text-right num text-slate-600">${L(r[3])}</td><td class="px-3 py-2 text-right num text-navy">${L(r[4])}</td><td class="px-3 py-2 text-right num text-navy">${L(r[5])}</td></tr>`).join('');
+function show(v){['home','create','approve','reports'].forEach(x=>{document.getElementById('v-'+x).classList.toggle('hidden',x!==v);const t=document.getElementById('tab-'+x);if(t)t.classList.toggle('active',x===v);});window.scrollTo(0,0);}
+</script>
+</body>
+</html>

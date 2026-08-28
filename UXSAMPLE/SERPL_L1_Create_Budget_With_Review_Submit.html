@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SERPL Budget Portal - L1 Create Request Prototype</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fafafa;color:#222;font-family:Arial,Helvetica,sans-serif;font-size:13px}
+.topline{height:3px;background:#24205f}
+.header{height:88px;background:#fff;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;padding:0 22%;gap:12px}
+.logo{width:35px;height:35px;border:1px solid #ddd;border-radius:50%;font-size:8px;font-weight:700;color:#064b8d;display:flex;align-items:center;justify-content:center;text-align:center}
+.brand b{display:block;color:#173d72;font-size:14px}.brand span{font-size:10px;color:#e66c25}
+.user{margin-left:auto;text-align:right;font-size:10px;color:#888}.user strong{display:block;color:#222;font-size:12px}
+.sign{margin-left:10px;border:1px solid #ddd;background:#fff;border-radius:5px;padding:7px 10px}
+.nav{height:38px;border-bottom:1px solid #e6e6e6;background:#fff;padding:0 22%;display:flex;align-items:center;gap:28px;color:#666;font-size:12px}.nav .active{color:#e66c25;font-weight:700}
+.page{width:950px;margin:auto;padding:22px 0 45px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}.head h1{font-size:17px;margin:0 0 4px}.head p{margin:0;color:#888;font-size:10px}
+.status{border:1px solid #ddd;border-radius:14px;padding:5px 12px;color:#777;font-size:10px}
+.card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:16px;margin-bottom:14px}
+.label{font-size:10px;color:#8b8b8b;margin-bottom:5px}.value{font-size:12px;font-weight:700}
+.eyebrow{font-size:10px;color:#856a58;font-weight:700;letter-spacing:.4px;margin-bottom:14px}
+.headergrid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px 35px}
+.info{margin-top:13px;padding:9px 11px;background:#fafafa;border-left:3px solid #e66c25;color:#777;font-size:10px}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sectiontitle{font-size:11px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.4px}
+.small{font-size:10px;color:#999}
+.categories{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.category{border:1px solid #ddd;border-radius:8px;padding:14px;cursor:pointer;min-height:91px;position:relative}
+.category:hover{border-color:#e98b59}.category.active{border:1.5px solid #e66c25;background:#fff8f3}
+.tick{position:absolute;right:10px;top:10px;width:18px;height:18px;border:1px solid #ddd;border-radius:50%;font-size:10px;text-align:center;line-height:17px;color:transparent}
+.category.active .tick{background:#e66c25;border-color:#e66c25;color:#fff}
+.icon{font-size:18px;margin-bottom:7px}.catname{font-size:13px;font-weight:700;margin-bottom:4px}.catdesc{font-size:10px;color:#888;line-height:1.4}
+.subpanel{display:none;margin-top:12px;padding:12px;border:1px solid #e4e4e4;background:#fafafa;border-radius:7px}.subpanel.show{display:block}
+.subgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.sub{background:#fff;border:1px solid #ddd;border-radius:5px;padding:9px;font-size:10px;font-weight:700;color:#555;cursor:pointer;text-align:center}
+.sub:hover{border-color:#e66c25}.sub.sel{border-color:#e66c25;background:#fff3eb;color:#c95720}
+.requirement{border:1px solid #ddd;border-radius:8px;margin-bottom:11px;overflow:hidden;background:#fff}
+.reqhead{background:#fafafa;border-bottom:1px solid #e6e6e6;padding:11px 12px;display:flex;align-items:center;justify-content:space-between}
+.reqtitle{font-size:12px;font-weight:700}.reqmeta{font-size:9px;color:#999;margin-top:3px}
+.actions{display:flex;gap:6px}.btn{border:1px solid #ddd;background:#fff;border-radius:5px;padding:7px 10px;font-size:10px;font-weight:700;cursor:pointer}.orange{background:#f26f21;color:#fff;border-color:#f26f21}.danger{color:#b33;border-color:#e7cccc}
+.reqbody{padding:12px}
+.fields{display:grid;grid-template-columns:1fr 1.8fr 1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+input,select,textarea{width:100%;border:1px solid #d9d9d9;border-radius:5px;padding:7px;font-size:10px;background:#fff;color:#333}
+textarea{min-height:46px;resize:vertical}
+.field label{display:block;font-size:9px;color:#777;margin-bottom:4px}
+.field.wide{grid-column:span 2}.field.full{grid-column:1/-1}
+.detailtable{width:100%;border-collapse:collapse;margin-top:9px}.detailtable th{background:#f8f8f8;color:#777;font-size:9px;text-align:left;border:1px solid #e2e2e2;padding:7px}.detailtable td{border:1px solid #e2e2e2;padding:6px;vertical-align:top}
+.totalbar{display:flex;justify-content:flex-end;gap:25px;background:#f7f7f7;padding:9px;margin-top:10px;font-size:10px;color:#777}.totalbar b{color:#222}
+.addbox{border:1px dashed #d6d6d6;border-radius:8px;padding:12px;text-align:center;color:#888;background:#fcfcfc;margin-top:10px}
+.addbox button{margin-top:7px}
+.summary{width:100%;border-collapse:collapse}.summary th,.summary td{border:1px solid #e2e2e2;padding:8px;font-size:10px}.summary th{background:#f8f8f8;color:#777;text-align:left}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:7px}.ok,.warn{padding:8px;border-radius:5px;font-size:10px}.ok{background:#f2faf4;color:#397248;border:1px solid #d8eadc}.warn{background:#fff9ee;color:#956c31;border:1px solid #f0e3c7}
+.footer{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid #eee}.toast{display:none;position:fixed;right:20px;bottom:20px;background:#333;color:#fff;padding:10px 14px;border-radius:5px;font-size:11px}
+@media(max-width:1000px){.header,.nav{padding-left:20px;padding-right:20px}.page{width:94%}.headergrid{grid-template-columns:repeat(2,1fr)}.subgrid{grid-template-columns:repeat(2,1fr)}}
+
+.review-overlay{display:none;position:fixed;inset:0;background:rgba(20,30,45,.38);z-index:100;overflow:auto;padding:30px 0}
+.review-modal{width:980px;max-width:94%;margin:auto;background:#fff;border-radius:10px;border:1px solid #ddd;box-shadow:0 18px 45px rgba(0,0,0,.18);overflow:hidden}
+.review-top{padding:15px 18px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between;align-items:flex-start}
+.review-top h2{font-size:16px;margin:0 0 4px}.review-top p{font-size:10px;color:#888;margin:0}
+.close{border:1px solid #ddd;background:#fff;border-radius:5px;padding:6px 10px;cursor:pointer}
+.review-body{padding:17px}
+.review-alert{background:#fff8ee;border:1px solid #f0dfc0;border-left:3px solid #e66c25;padding:10px 12px;font-size:10px;color:#765d38;margin-bottom:14px}
+.review-header{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.review-metric{border:1px solid #e1e1e1;border-radius:7px;padding:10px}.review-metric small{display:block;color:#888;font-size:9px}.review-metric b{display:block;margin-top:4px;font-size:13px}
+.review-section{border:1px solid #ddd;border-radius:8px;margin-bottom:12px;overflow:hidden}
+.review-section-head{background:#fafafa;padding:10px 12px;font-size:11px;font-weight:700;display:flex;justify-content:space-between}
+.review-section-body{padding:10px 12px}
+.review-table{width:100%;border-collapse:collapse}.review-table th,.review-table td{border:1px solid #e2e2e2;padding:7px;font-size:9px;vertical-align:top}.review-table th{background:#f8f8f8;color:#777;text-align:left}
+.review-total{display:flex;justify-content:flex-end;gap:24px;background:#f7f7f7;padding:10px;font-size:10px}.review-total b{font-size:13px;color:#222}
+.review-footer{padding:12px 17px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:8px}
+.confirm-box{display:none;background:#f4faf5;border:1px solid #d7eadb;border-radius:7px;padding:10px;font-size:10px;color:#397248;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<header class="header">
+  <div class="logo">Indian<br>Oil</div>
+  <div class="brand"><b>SERPL Budget Portal</b><span>South Eastern Region Pipelines</span></div>
+  <div class="user"><strong>location.user</strong>LOCATION_USER</div>
+  <button class="sign">Sign out</button>
+</header>
+<nav class="nav"><span>Home</span><span class="active">Create</span><span>Approve</span><span>Reports</span></nav>
+
+<main class="page">
+<div class="head">
+  <div><h1>Create Budget Request</h1><p>One consolidated budget request for the selected Cost Centre and Financial Year.</p></div>
+  <div class="status">Draft</div>
+</div>
+
+<section class="card">
+<div class="eyebrow">BUDGET HEADER</div>
+<div class="headergrid">
+ <div><div class="label">Region</div><div class="value">SERPL</div></div>
+ <div><div class="label">Base</div><div class="value">Paradip</div></div>
+ <div><div class="label">Operating Location</div><div class="value">PHBPL_Paradip SBM</div></div>
+ <div><div class="label">Company Code</div><div class="value">9280</div></div>
+ <div><div class="label">Pipeline</div><div class="value">PHBPL</div></div>
+ <div><div class="label">Cost Centre</div><div class="value">P5142</div></div>
+ <div><div class="label">Financial Year</div><div class="value">RBE 2026-27 / BE 2027-28</div></div>
+ <div><div class="label">Request Number</div><div class="value" style="color:#999">Generated on Submit</div></div>
+</div>
+<div class="info"><b>One Cost Centre = One Request.</b> R&M, Chemical and Power & Fuel can all be included in the same request.</div>
+</section>
+
+<section class="card">
+<div class="sectionhead"><div><div class="sectiontitle">1. Select Budget Category</div><div class="small">Select one or more categories required for this Cost Centre.</div></div></div>
+<div class="categories">
+ <div class="category" id="rm" onclick="toggle('rm')"><div class="tick">✓</div><div class="icon">🔧</div><div class="catname">R&M</div><div class="catdesc">Repair & Maintenance requirements, works and services.</div></div>
+ <div class="category" id="chemical" onclick="toggle('chemical')"><div class="tick">✓</div><div class="icon">🧪</div><div class="catname">Chemical</div><div class="catdesc">Chemical consumption, treatment and related requirements.</div></div>
+ <div class="category" id="fuel" onclick="toggle('fuel')"><div class="tick">✓</div><div class="icon">⚡</div><div class="catname">Power & Fuel</div><div class="catdesc">Power, electricity, fuel and energy requirements.</div></div>
+</div>
+
+<div id="subrm" class="subpanel">
+<div class="small" style="font-weight:700;margin-bottom:8px;color:#666">R&M — SELECT SUB-HEAD</div>
+<div class="subgrid">
+ <div class="sub" onclick="choose(this,'rm','Civil')">Civil</div>
+ <div class="sub" onclick="choose(this,'rm','Mechanical')">Mechanical</div>
+ <div class="sub" onclick="choose(this,'rm','Electrical')">Electrical</div>
+ <div class="sub" onclick="choose(this,'rm','Instrumentation')">Instrumentation</div>
+ <div class="sub" onclick="choose(this,'rm','Pipeline / Mainline')">Pipeline / Mainline</div>
+ <div class="sub" onclick="choose(this,'rm','Buildings')">Buildings</div>
+ <div class="sub" onclick="choose(this,'rm','Stations')">Stations</div>
+ <div class="sub" onclick="choose(this,'rm','Other R&M')">Other R&M</div>
+</div>
+<div class="addbox">Can't find the required approved sub-head? <button class="btn" onclick="addCustom('rm')">+ Add More</button></div>
+</div>
+
+<div id="subchemical" class="subpanel">
+<div class="small" style="font-weight:700;margin-bottom:8px;color:#666">CHEMICAL — SELECT SUB-HEAD</div>
+<div class="subgrid">
+ <div class="sub" onclick="choose(this,'chemical','Corrosion Inhibitor')">Corrosion Inhibitor</div>
+ <div class="sub" onclick="choose(this,'chemical','Biocide')">Biocide</div>
+ <div class="sub" onclick="choose(this,'chemical','Water Treatment')">Water Treatment</div>
+ <div class="sub" onclick="choose(this,'chemical','Other Chemical')">Other Chemical</div>
+</div>
+<div class="addbox">Need another approved Chemical sub-head? <button class="btn" onclick="addCustom('chemical')">+ Add More</button></div>
+</div>
+
+<div id="subfuel" class="subpanel">
+<div class="small" style="font-weight:700;margin-bottom:8px;color:#666">POWER & FUEL — SELECT SUB-HEAD</div>
+<div class="subgrid">
+ <div class="sub" onclick="choose(this,'fuel','Electricity')">Electricity</div>
+ <div class="sub" onclick="choose(this,'fuel','Diesel')">Diesel</div>
+ <div class="sub" onclick="choose(this,'fuel','HSD')">HSD</div>
+ <div class="sub" onclick="choose(this,'fuel','Other Power & Fuel')">Other Power & Fuel</div>
+</div>
+<div class="addbox">Need another approved Power & Fuel sub-head? <button class="btn" onclick="addCustom('fuel')">+ Add More</button></div>
+</div>
+</section>
+
+<section class="card">
+<div class="sectiontitle" style="margin-bottom:12px">2. Financial Position</div>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+ <div class="metric"><div class="label">Actual FY 2025-26</div><div class="value">₹120.50 L</div></div>
+ <div class="metric"><div class="label">Expense Till Q1 FY 2026-27</div><div class="value">₹32.40 L</div></div>
+ <div class="metric"><div class="label">Approved BE FY 2026-27</div><div class="value">₹105.00 L</div></div>
+ <div class="metric"><div class="label">RBE FY 2026-27</div><div class="value">₹112.00 L</div></div>
+ <div class="metric"><div class="label">Proposed BE FY 2027-28</div><div class="value" id="grand">₹0.00 L</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="sectionhead">
+ <div><div class="sectiontitle">3. Requirement Details</div><div class="small">Each selected sub-head appears as a separate box. Add more sub-heads above whenever required.</div></div>
+</div>
+<div id="requirements">
+ <div class="empty">Select a category and sub-head above. The relevant requirement box will appear here.</div>
+</div>
+</section>
+
+<section class="card">
+<div class="sectiontitle" style="margin-bottom:10px">4. Consolidated Request Summary</div>
+<table class="summary">
+<thead><tr><th>Category</th><th>Sub-heads Added</th><th>Items</th><th>Proposed BE FY 2027-28</th></tr></thead>
+<tbody id="summary"></tbody>
+</table>
+</section>
+
+<section class="card">
+<div class="sectiontitle" style="margin-bottom:10px">5. Review & Submission</div>
+<div class="checks">
+ <div class="ok">✓ Cost Centre and Financial Year selected</div>
+ <div class="ok">✓ Category / Sub-head selected</div>
+ <div class="ok">✓ Actual and RBE figures displayed</div>
+ <div class="warn">⚠ Justification and Reference are mandatory for each applicable requirement.</div>
+</div>
+<div class="footer">
+ <button class="btn" onclick="toast('Draft saved')">Save Draft</button>
+ <button class="btn" onclick="openReview()">Review & Submit</button>
+ <button class="btn orange" onclick="openReview()">Submit</button>
+</div>
+</section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const state={rm:[],chemical:[],fuel:[]};
+const labels={rm:'R&M',chemical:'Chemical',fuel:'Power & Fuel'};
+
+function toggle(k){
+ document.getElementById(k).classList.toggle('active');
+ document.getElementById('sub'+k).classList.toggle('show');
+}
+function choose(el,k,name){
+ el.classList.toggle('sel');
+ if(el.classList.contains('sel')){
+   if(!state[k].includes(name))state[k].push(name);
+ }else{
+   state[k]=state[k].filter(x=>x!==name);
+ }
+ render();
+}
+function addCustom(k){
+ const name=prompt('Enter the approved sub-head name to add:');
+ if(name && name.trim()){
+   const n=name.trim();
+   if(!state[k].includes(n))state[k].push(n);
+   render();
+ }
+}
+function render(){
+ const box=document.getElementById('requirements');
+ const active=Object.keys(state).filter(k=>state[k].length);
+ if(!active.length){
+   box.innerHTML='<div class="empty">Select a category and sub-head above. The relevant requirement box will appear here.</div>';
+   updateSummary();return;
+ }
+ box.innerHTML='';
+ active.forEach(k=>{
+   state[k].forEach(sub=>{
+     const id=(k+'-'+sub).replace(/[^a-zA-Z0-9]/g,'');
+     const div=document.createElement('div');div.className='requirement';div.id='box-'+id;
+     div.innerHTML=`
+       <div class="reqhead">
+        <div><div class="reqtitle">${labels[k]} → ${sub}</div><div class="reqmeta">Separate requirement section for this sub-head</div></div>
+        <div class="actions"><button class="btn" onclick="collapse('${id}')">Collapse</button><button class="btn danger" onclick="removeSub('${k}','${sub.replace(/'/g,"\\'")}')">Remove</button></div>
+       </div>
+       <div class="reqbody" id="body-${id}">
+        ${k==='rm'?rmFields():otherFields(k)}
+        <div class="table-wrap">
+         <table class="detailtable">
+          <thead><tr>${k==='rm'
+            ?'<th>S.No.</th><th>Fund / Budget Head</th><th>Item Description</th><th>Material</th><th>Service</th><th>Total Proposed BE</th><th>Work Type</th><th>Recurring / One-Time</th><th>Reference Taken From</th><th>Justification</th><th>Action</th>'
+            :'<th>S.No.</th><th>Budget Head</th><th>Item Description</th><th>UOM</th><th>Quantity</th><th>Rate</th><th>Proposed BE</th><th>Reference / Basis</th><th>Justification</th><th>Action</th>'}
+          </tr></thead>
+          <tbody id="rows-${id}">${k==='rm'?rmRow(1):otherRow(1)}</tbody>
+         </table>
+        </div>
+        <div style="margin-top:8px"><button class="btn orange" onclick="addRow('${id}','${k}')">+ Add Requirement Row</button></div>
+        <div class="totalbar">Sub-head total: <b id="total-${id}">₹0.00 L</b></div>
+       </div>`;
+     box.appendChild(div);
+   });
+ });
+ updateSummary();
+}
+function rmFields(){
+ return `<div class="fields">
+  <div class="field"><label>Actual FY 2025-26</label><input value="120.50" readonly></div>
+  <div class="field"><label>RBE FY 2026-27</label><input value="112.00" readonly></div>
+  <div class="field"><label>Approved BE FY 2026-27</label><input value="105.00" readonly></div>
+  <div class="field"><label>Category</label><input value="R&M" readonly></div>
+  <div class="field"><label>Sub-head</label><input value="Selected above" readonly></div>
+ </div>`;
+}
+function otherFields(k){
+ return `<div class="fields">
+  <div class="field"><label>Actual FY 2025-26</label><input value="0.00" readonly></div>
+  <div class="field"><label>RBE FY 2026-27</label><input value="0.00" readonly></div>
+  <div class="field"><label>Category</label><input value="${labels[k]}" readonly></div>
+  <div class="field"><label>Sub-head</label><input value="Selected above" readonly></div>
+  <div class="field"><label>Proposed BE FY 2027-28</label><input value="0.00" readonly></div>
+ </div>`;
+}
+function rmRow(n){
+ return `<tr>
+ <td>${n}</td><td><select><option>Applicable Budget Head</option><option>1103 – Township Maintenance</option><option>1106 – Others - Civil</option></select></td>
+ <td><textarea placeholder="Describe requirement"></textarea></td>
+ <td><input type="number" value="0" oninput="calc()"></td><td><input type="number" value="0" oninput="calc()"></td><td><input value="0" readonly></td>
+ <td><select><option>Existing Work Order</option><option>Existing Service Contract</option><option>Previous Year Requirement</option><option>Inspection / Audit Observation</option><option>Statutory / Regulatory Requirement</option><option>New Requirement</option></select></td>
+ <td><select><option>Recurring</option><option>One-Time</option></select></td>
+ <td><textarea placeholder="WO / Contract / Estimate / reference"></textarea></td>
+ <td><textarea placeholder="Why required and basis of estimate"></textarea></td>
+ <td><button class="btn danger" onclick="delRow(this)">Delete</button></td></tr>`;
+}
+function otherRow(n){
+ return `<tr><td>${n}</td><td><select><option>Applicable Budget Head</option><option>Other</option></select></td>
+ <td><textarea placeholder="Describe requirement"></textarea></td><td><input placeholder="UOM"></td><td><input type="number" value="0"></td><td><input type="number" value="0"></td>
+ <td><input type="number" value="0" oninput="calc()"></td><td><textarea placeholder="Reference / basis"></textarea></td><td><textarea placeholder="Justification"></textarea></td>
+ <td><button class="btn danger" onclick="delRow(this)">Delete</button></td></tr>`;
+}
+function addRow(id,k){
+ const tbody=document.getElementById('rows-'+id);const n=tbody.rows.length+1;
+ tbody.insertAdjacentHTML('beforeend',k==='rm'?rmRow(n):otherRow(n));calc();
+}
+function delRow(b){
+ const tb=b.closest('tbody');if(tb.rows.length===1){toast('At least one row is required.');return}
+ b.closest('tr').remove();[...tb.rows].forEach((r,i)=>r.cells[0].textContent=i+1);calc();
+}
+function removeSub(k,sub){
+ state[k]=state[k].filter(x=>x!==sub);
+ document.querySelectorAll('.sub').forEach(el=>{if(el.textContent.trim()===sub)el.classList.remove('sel')});
+ render();
+}
+function collapse(id){
+ const body=document.getElementById('body-'+id);body.style.display=body.style.display==='none'?'block':'none';
+}
+function calc(){
+ let grand=0;
+ document.querySelectorAll('tbody[id^="rows-"]').forEach(tb=>{
+   let total=0;
+   [...tb.rows].forEach(r=>{
+     if(r.cells.length===11){
+       const m=parseFloat(r.cells[3].querySelector('input')?.value||0);
+       const s=parseFloat(r.cells[4].querySelector('input')?.value||0);
+       total+=m+s;
+       const out=r.cells[5].querySelector('input');if(out)out.value=(m+s).toFixed(2);
+     }else{
+       total+=parseFloat(r.cells[6].querySelector('input')?.value||0);
+     }
+   });
+   const id=tb.id.replace('rows-','');const out=document.getElementById('total-'+id);
+   if(out)out.textContent='₹'+total.toFixed(2)+' L';grand+=total;
+ });
+ document.getElementById('grand').textContent='₹'+grand.toFixed(2)+' L';
+ updateSummary();
+}
+function updateSummary(){
+ let html='',grand=0,totalItems=0;
+ Object.keys(state).forEach(k=>{
+   if(!state[k].length)return;
+   let amt=0,items=0;
+   state[k].forEach(sub=>{
+     const id=(k+'-'+sub).replace(/[^a-zA-Z0-9]/g,'');
+     const tb=document.getElementById('rows-'+id);if(!tb)return;
+     [...tb.rows].forEach(r=>{
+       items++;
+       amt+=r.cells.length===11?parseFloat(r.cells[5].querySelector('input')?.value||0):parseFloat(r.cells[6].querySelector('input')?.value||0);
+     });
+   });
+   grand+=amt;totalItems+=items;
+   html+=`<tr><td>${labels[k]}</td><td>${state[k].join(', ')}</td><td>${items}</td><td>₹${amt.toFixed(2)} L</td></tr>`;
+ });
+ html+=`<tr style="font-weight:700;background:#fafafa"><td colspan="2">TOTAL</td><td>${totalItems}</td><td>₹${grand.toFixed(2)} L</td></tr>`;
+ document.getElementById('summary').innerHTML=html;
+}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2000)}
+
+function openReview(){
+  calc();
+  buildReview();
+  document.getElementById('reviewOverlay').style.display='block';
+}
+function closeReview(){document.getElementById('reviewOverlay').style.display='none'}
+function buildReview(){
+  let grand=0, html='', detail='';
+  Object.keys(state).forEach(k=>{
+    state[k].forEach(sub=>{
+      const id=(k+'-'+sub).replace(/[^a-zA-Z0-9]/g,'');
+      const tb=document.getElementById('rows-'+id);
+      if(!tb)return;
+      let amt=0,items=0;
+      [...tb.rows].forEach(r=>{
+        items++;
+        let val=0;
+        if(r.cells.length===11){
+          val=parseFloat(r.cells[5].querySelector('input')?.value||0);
+          const desc=r.cells[2].querySelector('textarea')?.value||'—';
+          const bh=r.cells[1].querySelector('select')?.value||'—';
+          const wt=r.cells[6].querySelector('select')?.value||'—';
+          const rec=r.cells[7].querySelector('select')?.value||'—';
+          const ref=r.cells[8].querySelector('textarea')?.value||'—';
+          const just=r.cells[9].querySelector('textarea')?.value||'—';
+          detail+=`<tr><td>${labels[k]}</td><td>${sub}</td><td>${bh}</td><td>${desc}</td><td>${wt}</td><td>${rec}</td><td>${ref}</td><td>${just}</td><td>₹${val.toFixed(2)} L</td></tr>`;
+        }else{
+          val=parseFloat(r.cells[6].querySelector('input')?.value||0);
+          const desc=r.cells[2].querySelector('textarea')?.value||'—';
+          const bh=r.cells[1].querySelector('select')?.value||'—';
+          const ref=r.cells[7].querySelector('textarea')?.value||'—';
+          const just=r.cells[8].querySelector('textarea')?.value||'—';
+          detail+=`<tr><td>${labels[k]}</td><td>${sub}</td><td>${bh}</td><td>${desc}</td><td>—</td><td>—</td><td>${ref}</td><td>${just}</td><td>₹${val.toFixed(2)} L</td></tr>`;
+        }
+        amt+=val;
+      });
+      grand+=amt;
+      html+=`<tr><td>${labels[k]}</td><td>${state[k].join(', ')}</td><td>${items}</td><td>₹${amt.toFixed(2)} L</td></tr>`;
+    });
+  });
+  if(!html)html='<tr><td colspan="4">No requirements entered.</td></tr>';
+  if(!detail)detail='<tr><td colspan="9">No requirement details entered.</td></tr>';
+  document.getElementById('reviewSummary').innerHTML=html+`<tr style="font-weight:700;background:#fafafa"><td colspan="2">TOTAL</td><td></td><td>₹${grand.toFixed(2)} L</td></tr>`;
+  document.getElementById('reviewDetails').innerHTML=detail;
+  document.getElementById('reviewGrand').textContent='₹'+grand.toFixed(2)+' L';
+}
+function confirmSubmit(){
+  document.getElementById('confirmBox').style.display='block';
+  document.querySelector('.review-footer .orange').textContent='Request Submitted';
+  document.querySelector('.review-footer .orange').disabled=true;
+  toast('Request submitted – Request Number generation should occur here.');
+}
+</script>
+
+<div class="review-overlay" id="reviewOverlay">
+ <div class="review-modal">
+  <div class="review-top">
+   <div><h2>Review Budget Request</h2><p>Review the complete Cost Centre package before final submission.</p></div>
+   <button class="close" onclick="closeReview()">✕ Close</button>
+  </div>
+  <div class="review-body">
+   <div class="review-alert">
+    <b>Final review:</b> After submission, one Request Number will be generated for this Cost Centre. Check all category, sub-head, amount, reference and justification details before submitting.
+   </div>
+
+   <div class="review-header">
+    <div class="review-metric"><small>Cost Centre</small><b>P5142</b></div>
+    <div class="review-metric"><small>Financial Year</small><b>BE 2027-28</b></div>
+    <div class="review-metric"><small>Company Code</small><b>9280</b></div>
+    <div class="review-metric"><small>Status</small><b style="color:#b56a25">Ready for Review</b></div>
+   </div>
+
+   <div class="review-section">
+    <div class="review-section-head"><span>Financial Position</span><span>₹ Lakh</span></div>
+    <div class="review-section-body">
+     <table class="review-table">
+      <tr><th>Actual FY 2025-26</th><th>Expense Till Q1 FY 2026-27</th><th>Approved BE FY 2026-27</th><th>RBE FY 2026-27</th><th>Proposed BE FY 2027-28</th></tr>
+      <tr><td>₹120.50 L</td><td>₹32.40 L</td><td>₹105.00 L</td><td>₹112.00 L</td><td id="reviewGrand">₹0.00 L</td></tr>
+     </table>
+    </div>
+   </div>
+
+   <div class="review-section">
+    <div class="review-section-head"><span>Consolidated Budget Request</span><span>One Cost Centre Request</span></div>
+    <div class="review-section-body">
+     <table class="review-table">
+      <thead><tr><th>Category</th><th>Sub-heads</th><th>Items</th><th>Proposed BE FY 2027-28</th></tr></thead>
+      <tbody id="reviewSummary"></tbody>
+     </table>
+    </div>
+   </div>
+
+   <div class="review-section">
+    <div class="review-section-head"><span>Requirement Details</span><span>Expand / Verify</span></div>
+    <div class="review-section-body">
+     <table class="review-table">
+      <thead><tr><th>Category</th><th>Sub-head</th><th>Budget Head</th><th>Requirement</th><th>Work Type</th><th>Recurring / One-Time</th><th>Reference</th><th>Justification</th><th>Proposed BE</th></tr></thead>
+      <tbody id="reviewDetails"></tbody>
+     </table>
+    </div>
+   </div>
+
+   <div class="review-section">
+    <div class="review-section-head"><span>Submission Validation</span></div>
+    <div class="review-section-body">
+     <div class="checks">
+      <div class="ok">✓ Cost Centre and Financial Year confirmed</div>
+      <div class="ok">✓ Category and sub-heads selected</div>
+      <div class="ok">✓ Financial figures displayed with relevant years</div>
+      <div class="ok">✓ Proposed BE totals calculated</div>
+      <div class="ok">✓ Reference / basis captured where applicable</div>
+      <div class="ok">✓ Justification captured for each requirement</div>
+     </div>
+    </div>
+   </div>
+
+   <div class="confirm-box" id="confirmBox">
+    <b>Ready for submission.</b> On confirmation, the system should generate one official Request Number and route the request to the next approval level.
+   </div>
+  </div>
+  <div class="review-footer">
+   <button class="btn" onclick="closeReview()">Back to Edit</button>
+   <button class="btn orange" onclick="confirmSubmit()">Confirm & Submit</button>
+  </div>
+ </div>
+</div>
+</body>
+</html>

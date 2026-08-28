@@ -1,0 +1,492 @@
+// IOCL SERPL Budget Management Portal — Prisma schema
+// Mirrors the data model described in CLAUDE.md §6.
+//
+// Reworked 2026-08-21 against `business_knowledge/Data for R&M Portal.xlsx`'s
+// `MAIN SHEET` (added after the original 2026-08-12 build — see CLAUDE.md's
+// "Last verified" note). Key changes from the original schema:
+//   - BudgetHeader is now keyed by [costCentreId, cycleId] only (one Budget
+//     Creation Proposal per Cost Centre per FY cycle — the MAIN SHEET's
+//     "MAIN RULE"), not per Budget Head. A proposal spans many Budget Heads.
+//   - The master line-item-code entity is renamed BudgetLineItem -> BudgetSubHead
+//     to match MAIN SHEET's own "Budget Sub Head" column, and gains a
+//     `broadPnlHead` grouping one level up on BudgetHead (R&M / Power / Chemical).
+//   - BudgetEntry.subHeadId (formerly lineItemId) links to BudgetSubHead;
+//     the free-text itemDescription field is dropped — a row's identity is
+//     its selected Sub Head. Multiple entry rows may share a Sub Head.
+//   - ActualsDataType renamed to match the three separate admin upload types
+//     (LY Actual / Approved BE / YTD Actual) that replaced the single
+//     combined AE/BE/ongoing workbook upload.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Masters
+// ─────────────────────────────────────────────────────────────────────────
+
+model Region {
+  id   String @id @default(cuid())
+  code String @unique // "SERPL"
+  name String
+
+  companyCodes CompanyCode[]
+
+  @@map("regions")
+}
+
+model CompanyCode {
+  id       String  @id @default(cuid())
+  code     String  @unique // "9320", "9280"
+  name     String?
+  regionId String
+  region   Region  @relation(fields: [regionId], references: [id])
+
+  pipelines   Pipeline[]
+  costCentres CostCentre[]
+  employees   Employee[]
+
+  @@map("company_codes")
+}
+
+model Pipeline {
+  id            String      @id @default(cuid())
+  code          String      @unique // "PHPL", "PRRPL", "PHBPL", "PSHPL"
+  name          String?
+  companyCodeId String
+  companyCode   CompanyCode @relation(fields: [companyCodeId], references: [id])
+
+  costCentres CostCentre[]
+
+  @@map("pipelines")
+}
+
+model Base {
+  id   String @id @default(cuid())
+  code String @unique
+  name String @unique // Paradip, Bhubaneswar, Sambalpur, ERPL, Vijayawada — displayed as "Base/LOC"
+
+  costCentres CostCentre[]
+  employees   Employee[]
+
+  @@map("bases")
+}
+
+/// Operating Location
+model CostCentre {
+  id            String      @id @default(cuid())
+  code          String      @unique // e.g. "P5142"
+  name          String
+  companyCodeId String
+  companyCode   CompanyCode @relation(fields: [companyCodeId], references: [id])
+  pipelineId    String
+  pipeline      Pipeline    @relation(fields: [pipelineId], references: [id])
+  baseId        String
+  base          Base        @relation(fields: [baseId], references: [id])
+
+  budgetHeaders BudgetHeader[]
+
+  @@index([baseId])
+  @@index([pipelineId])
+  @@index([companyCodeId])
+  @@map("cost_centres")
+}
+
+/// The three "Broad PNL Head" groupings from MAIN SHEET (rows 26-58, column B).
+enum BroadPnlHead {
+  RM // "R & M"
+  POWER // "Power"
+  CHEMICAL // "Chemical"
+}
+
+model BudgetHead {
+  id           String       @id @default(cuid())
+  code         String       @unique
+  name         String       @unique // Civil, Electrical, Mechanical, ... Import of Power, ... Drag Reducing Agent, ...
+  broadPnlHead BroadPnlHead // grouping one level up MAIN SHEET adds — see src/lib/labels.ts for display text
+
+  subHeads BudgetSubHead[]
+
+  @@map("budget_heads")
+}
+
+/// Master "Budget Sub Head" (the "FUND" code + "Budget Sub Head" text from
+/// MAIN SHEET rows 26-58, e.g. FUND 3123 / Budget Sub Head "Maintenance
+/// Contract" under Budget Head "S.B.M./ Jetty"). Not to be confused with
+/// `BudgetEntry`, the per-proposal transactional grid row.
+model BudgetSubHead {
+  id           String     @id @default(cuid())
+  code         String     @unique // FUND code
+  name         String // Budget Sub Head text
+  budgetHeadId String
+  budgetHead   BudgetHead @relation(fields: [budgetHeadId], references: [id])
+
+  entries BudgetEntry[]
+  uom     SubHeadUom?
+  rates   SubHeadRate[]
+
+  @@index([budgetHeadId])
+  @@map("budget_sub_heads")
+}
+
+/// Admin-maintained UOM (Unit of Measure) for a Power/Chemical Budget Sub
+/// Head — static, no financial-year dimension. Not used for R&M Sub Heads.
+/// Added 2026-08-24 (see MAIN_SHEET_REWORK_PLAN.md addendum) so Power/
+/// Chemical entry rows can show "Qty (<uom>)" and compute Amount = Qty x Rate
+/// instead of the R&M Material+Service split.
+model SubHeadUom {
+  id        String        @id @default(cuid())
+  subHeadId String        @unique
+  subHead   BudgetSubHead @relation(fields: [subHeadId], references: [id], onDelete: Cascade)
+  uom       String
+  updatedAt DateTime      @updatedAt
+
+  @@map("sub_head_uom")
+}
+
+/// Admin-maintained Rate for a POWER or CHEMICAL Budget Sub Head, one row
+/// per fiscal year (rates can differ between the cycle's RBE year and BE
+/// year — e.g. prices escalating). Corrected 2026-08-25: Power was
+/// originally mis-specced as user-typed Rate — both Power and Chemical are
+/// admin-maintained now, identically. Not used for R&M (Material/Service,
+/// no Rate concept) Sub Heads. Live-linked to entries until a header
+/// reaches APPROVED, at which point the resolved rate is frozen onto the
+/// BudgetEntry permanently — see lib/workflow.ts's freezeQtyRateOnApproval
+/// and MAIN_SHEET_REWORK_PLAN.md's addendum ("Rate change impact").
+model SubHeadRate {
+  id         String        @id @default(cuid())
+  subHeadId  String
+  subHead    BudgetSubHead @relation(fields: [subHeadId], references: [id], onDelete: Cascade)
+  fiscalYear String // e.g. "2026-27"
+  rate       Decimal       @db.Decimal(18, 2)
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([subHeadId, fiscalYear])
+  @@map("sub_head_rates")
+}
+
+/// Reference-only employee master (311 rows from Data base Emplyee sheet).
+/// Emp Contrl Off (reporting officer) is descriptive only — not used for
+/// approval routing (see CLAUDE.md §3). Admin-editable via Masters > Employees.
+model Employee {
+  id               String       @id @default(cuid())
+  employeeNo       String       @unique
+  title            String?
+  firstName        String
+  lastName         String
+  companyCodeId    String?
+  companyCode      CompanyCode? @relation(fields: [companyCodeId], references: [id])
+  personnelArea    String?
+  personnelSubArea String?
+  employeeGroup    String?
+  employeeSubgroup String?
+  designationLong  String?
+  designationShort String?
+  employeeCategory String?
+  empContrlOff     String? // reporting officer's employee number, descriptive only
+  function         String?
+  functionalArea   String?
+  baseId           String?
+  base             Base?        @relation(fields: [baseId], references: [id])
+
+  user User?
+
+  @@index([baseId])
+  @@map("employees")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Auth & access
+// ─────────────────────────────────────────────────────────────────────────
+
+/// Internal role codes. Display labels (SIC, BIC, ...) live in src/lib/labels.ts
+/// — used consistently everywhere per the terminology mandate, see CLAUDE.md.
+enum Role {
+  LOCATION_USER
+  STATION_INCHARGE // displayed as "SIC" (L2)
+  BASE_INCHARGE // displayed as "BIC" (L3)
+  TS_DEPT // L4
+  FINANCE_DEPT // L5
+  ADMIN
+}
+
+enum ScopeType {
+  LOCATION
+  BASE
+  REGION
+  ALL
+}
+
+model User {
+  id                String    @id @default(cuid())
+  employeeId        String?   @unique // nullable: bootstrap admin need not map to Employee
+  employee          Employee? @relation(fields: [employeeId], references: [id])
+  username          String    @unique
+  passwordHash      String
+  /// Reversibly-encrypted (AES-256-GCM, see src/lib/password-crypto.ts) copy of the
+  /// current plaintext password, added 2026-08-25 so admin can download current
+  /// passwords for every user, per the user's explicit choice (a real security
+  /// tradeoff vs. one-time-only reveal — accepted deliberately, see
+  /// MAIN_SHEET_REWORK_PLAN.md). Null for accounts that predate this feature and
+  /// haven't been reset since, or any account whose password was set before this
+  /// column existed — bcrypt is one-way, so passwordHash alone can never recover it.
+  passwordEncrypted String?
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+
+  access                UserAccess[]
+  budgetHeaders         BudgetHeader[]         @relation("BudgetHeaderCreatedBy")
+  approvalActions       ApprovalAction[]
+  attachmentsUploaded   BudgetAttachment[]
+  actualsImportBatches  ActualsImportBatch[]
+  auditLogs             AuditLog[]
+  passwordResetRequests PasswordResetRequest[] @relation("PasswordResetRequestUser")
+  resolvedResetRequests PasswordResetRequest[] @relation("PasswordResetRequestResolvedBy")
+
+  @@map("users")
+}
+
+/// "Forgot password" request — created (unauthenticated, from the login
+/// page) when a user clicks Forgot Password and types their username.
+/// Admin sees a bubble/badge count of unresolved requests (Topbar) and can
+/// reset directly from the list (generates a new password, shows it once,
+/// marks resolved) — see src/app/(app)/admin/password-resets/.
+model PasswordResetRequest {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation("PasswordResetRequestUser", fields: [userId], references: [id], onDelete: Cascade)
+  requestedAt      DateTime  @default(now())
+  resolvedAt       DateTime?
+  resolvedByUserId String?
+  resolvedByUser   User?     @relation("PasswordResetRequestResolvedBy", fields: [resolvedByUserId], references: [id])
+
+  @@index([userId])
+  @@map("password_reset_requests")
+}
+
+/// One user can hold multiple role/scope grants — including multiple
+/// LOCATION-scoped grants, so one Location User can cover several Cost
+/// Centres (MAIN SHEET "NEW RULES": "1 Location user may have Multiple Cost
+/// center"). On user creation, auto-grant LOCATION_USER scoped to all cost
+/// centres under the employee's Base (see CLAUDE.md §4/§6).
+model UserAccess {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role
+  scopeType ScopeType
+  scopeId   String? // null when scopeType = ALL; otherwise a Location/Base/Region id
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@map("user_access")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Transactional
+// ─────────────────────────────────────────────────────────────────────────
+
+model BudgetCycle {
+  id               String    @id @default(cuid())
+  financialYearRBE String // e.g. "2026-27" — displayed as "CFY" (current FY, mid-year revision)
+  financialYearBE  String // e.g. "2027-28" — displayed as "NFY" (next FY, fresh ask)
+  isOpen           Boolean   @default(true) // admin-controlled; src/lib/cycle.ts enforces at most one open cycle at a time
+  opensAt          DateTime?
+  closesAt         DateTime?
+  createdAt        DateTime  @default(now())
+
+  budgetHeaders BudgetHeader[]
+
+  @@unique([financialYearRBE, financialYearBE])
+  @@map("budget_cycles")
+}
+
+enum BudgetStatus {
+  DRAFT
+  PENDING_STATION // pending SIC (L2)
+  PENDING_BASE // pending BIC (L3)
+  PENDING_TS // pending TS Dept (L4)
+  PENDING_FINANCE // pending Finance Dept (L5)
+  APPROVED
+}
+
+/// One Budget Creation Proposal per Cost Centre per FY cycle (MAIN SHEET's
+/// MAIN RULE) — holds entries spanning multiple Budget Heads/Sub Heads, so
+/// there is deliberately no budgetHeadId here (unlike the original schema).
+model BudgetHeader {
+  id              String       @id @default(cuid())
+  costCentreId    String
+  costCentre      CostCentre   @relation(fields: [costCentreId], references: [id])
+  cycleId         String
+  cycle           BudgetCycle  @relation(fields: [cycleId], references: [id])
+  createdByUserId String
+  createdByUser   User         @relation("BudgetHeaderCreatedBy", fields: [createdByUserId], references: [id])
+  status          BudgetStatus @default(DRAFT)
+  currentLevel    Int          @default(0) // 0 = Location User (Draft) .. 5 = Approved
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  entries         BudgetEntry[]
+  approvalActions ApprovalAction[]
+
+  @@unique([costCentreId, cycleId])
+  @@index([status])
+  @@index([cycleId])
+  @@map("budget_headers")
+}
+
+enum WorkType {
+  EXISTING_WORK_ORDER
+  APPROVED_PR
+  AUDIT_RECOMMENDATION
+  PMC_ATR_POINT
+  NEW
+}
+
+enum RecurringType {
+  RECURRING
+  ONE_TIME
+}
+
+/// Per-proposal entry-grid row. A row's identity is its selected Budget Sub
+/// Head (subHeadId) — no free-text description override. Multiple rows may
+/// share the same Sub Head (e.g. separate work items under one Fund code);
+/// Proposed RBE/BE display is aggregated per Sub Head across its rows (see
+/// src/app/(app)/budgets/[id]/EntryGrid.tsx).
+model BudgetEntry {
+  id                 String        @id @default(cuid())
+  headerId           String
+  header             BudgetHeader  @relation(fields: [headerId], references: [id], onDelete: Cascade)
+  subHeadId          String
+  subHead            BudgetSubHead @relation(fields: [subHeadId], references: [id])
+  rbeMaterial        Decimal       @default(0) @db.Decimal(18, 2) // R&M rows only
+  rbeService         Decimal       @default(0) @db.Decimal(18, 2) // R&M rows only
+  beMaterial         Decimal       @default(0) @db.Decimal(18, 2) // R&M rows only
+  beService          Decimal       @default(0) @db.Decimal(18, 2) // R&M rows only
+  // Power/Chemical rows (added 2026-08-24, see MAIN_SHEET_REWORK_PLAN.md
+  // addendum): Qty x Rate = Amount, replacing Material+Service. Power: both
+  // Qty and Rate are user-entered. Chemical: Qty is user-entered, Rate is
+  // server-resolved from SubHeadRate (live pre-approval, frozen at
+  // APPROVED) — never trust a client-submitted rate for Chemical rows.
+  rbeQty             Decimal       @default(0) @db.Decimal(18, 3)
+  rbeRate            Decimal       @default(0) @db.Decimal(18, 2)
+  beQty              Decimal       @default(0) @db.Decimal(18, 3)
+  beRate             Decimal       @default(0) @db.Decimal(18, 2)
+  // RBE Amount / BE Amount are computed — rbeMaterial+rbeService or
+  // rbeQty*rbeRate depending on the row's Sub Head's Budget Head's
+  // broadPnlHead (see src/lib/entry-amount.ts) — not stored, except the
+  // Chemical-rate freeze above which persists rbeRate/beRate specifically.
+  workType           WorkType
+  recurringOneTime   RecurringType
+  referenceTakenFrom String?
+  justification      String // required, see CLAUDE.md §3
+  remarks            String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  attachments BudgetAttachment[]
+
+  @@index([headerId])
+  @@index([subHeadId])
+  @@map("budget_entries")
+}
+
+model BudgetAttachment {
+  id               String      @id @default(cuid())
+  entryId          String
+  entry            BudgetEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  fileName         String
+  storedPath       String
+  uploadedByUserId String
+  uploadedByUser   User        @relation(fields: [uploadedByUserId], references: [id])
+  uploadedAt       DateTime    @default(now())
+
+  @@index([entryId])
+  @@map("budget_attachments")
+}
+
+enum ApprovalActionType {
+  APPROVE
+  RETURN
+}
+
+model ApprovalAction {
+  id             String             @id @default(cuid())
+  headerId       String
+  header         BudgetHeader       @relation(fields: [headerId], references: [id], onDelete: Cascade)
+  level          Int
+  actionByUserId String
+  actionByUser   User               @relation(fields: [actionByUserId], references: [id])
+  action         ApprovalActionType
+  remarks        String?
+  actionAt       DateTime           @default(now())
+
+  @@index([headerId])
+  @@map("approval_actions")
+}
+
+/// The three separate admin-maintained master uploads (replacing the single
+/// combined AE/BE/ongoing workbook). LY_ACTUAL = last FY's final actuals,
+/// APPROVED_BE = current FY's approved budget estimate, YTD_ACTUAL = current
+/// FY's actual expenditure to date.
+enum ActualsDataType {
+  LY_ACTUAL
+  APPROVED_BE
+  YTD_ACTUAL
+}
+
+/// Raw uploaded Finance/admin data. Codes (company code, cost centre, sub
+/// head) are stored as raw strings rather than hard FKs, so an import never
+/// fails on a code that doesn't (yet) match our masters; matching/
+/// aggregation happens at query time, per the decision in CLAUDE.md §3.
+model ActualsImportBatch {
+  id               String          @id @default(cuid())
+  fileName         String
+  dataType         ActualsDataType
+  uploadedByUserId String
+  uploadedByUser   User            @relation(fields: [uploadedByUserId], references: [id])
+  uploadedAt       DateTime        @default(now())
+  rowCount         Int?
+
+  rows ActualsRow[]
+
+  @@map("actuals_import_batches")
+}
+
+model ActualsRow {
+  id             String             @id @default(cuid())
+  batchId        String
+  batch          ActualsImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  companyCode    String
+  costCentreCode String // Cost Centre / Funds Center code
+  costCentreName String?
+  subHeadCode    String // Fund code (matches BudgetSubHead.code)
+  subHeadName    String?
+  fiscalYear     String
+  amount         Decimal            @db.Decimal(18, 2)
+  dataType       ActualsDataType
+
+  @@index([batchId])
+  @@index([costCentreCode])
+  @@index([subHeadCode])
+  @@index([fiscalYear])
+  @@map("actuals_rows")
+}
+
+model AuditLog {
+  id                String   @id @default(cuid())
+  entityType        String
+  entityId          String
+  action            String
+  performedByUserId String?
+  performedByUser   User?    @relation(fields: [performedByUserId], references: [id])
+  timestamp         DateTime @default(now())
+  diff              Json?
+
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}

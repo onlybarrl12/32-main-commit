@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SERPL Budget Portal - L1 Create Request</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fafafa;color:#222;font-family:Arial,Helvetica,sans-serif;font-size:13px}
+.topline{height:3px;background:#24205f}.header{height:88px;background:#fff;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;padding:0 22%;gap:12px}
+.logo{width:35px;height:35px;border:1px solid #ddd;border-radius:50%;font-size:8px;font-weight:700;color:#064b8d;display:flex;align-items:center;justify-content:center;text-align:center}
+.brand b{display:block;color:#173d72;font-size:14px}.brand span{font-size:10px;color:#e66c25}.user{margin-left:auto;text-align:right;font-size:10px;color:#888}.user strong{display:block;color:#222;font-size:12px}.sign{margin-left:10px;border:1px solid #ddd;background:#fff;border-radius:5px;padding:7px 10px}
+.nav{height:38px;border-bottom:1px solid #e6e6e6;background:#fff;padding:0 22%;display:flex;align-items:center;gap:28px;color:#666;font-size:12px}.nav .active{color:#e66c25;font-weight:700}
+.page{width:950px;margin:auto;padding:22px 0 45px}.head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}.head h1{font-size:17px;margin:0 0 4px}.head p{margin:0;color:#888;font-size:10px}.status{border:1px solid #ddd;border-radius:14px;padding:5px 12px;color:#777;font-size:10px}
+.card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:16px;margin-bottom:14px}.eyebrow,.sectiontitle{font-size:10px;color:#856a58;font-weight:700;letter-spacing:.4px;margin-bottom:13px}.sectiontitle{color:#777;text-transform:uppercase}
+.headergrid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px 35px}.label{font-size:10px;color:#8b8b8b;margin-bottom:5px}.value{font-size:12px;font-weight:700}.info{margin-top:13px;padding:9px 11px;background:#fafafa;border-left:3px solid #e66c25;color:#777;font-size:10px}
+.lock{display:inline-block;background:#fff4ec;color:#c45b22;border:1px solid #f1d4c1;border-radius:12px;padding:4px 9px;font-size:9px;font-weight:700}
+.category{border:1px solid #ddd;border-radius:8px;padding:14px;background:#fff;position:relative}.category.active{border:1.5px solid #e66c25;background:#fff8f3}.catrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.icon{font-size:18px;margin-bottom:7px}.catname{font-size:13px;font-weight:700;margin-bottom:4px}.catdesc{font-size:10px;color:#888;line-height:1.4}
+.subarea{margin-top:12px;padding:12px;border:1px solid #e4e4e4;background:#fafafa;border-radius:7px}.subgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.sub{background:#fff;border:1px solid #ddd;border-radius:5px;padding:9px;font-size:10px;font-weight:700;color:#555;cursor:pointer;text-align:center}.sub:hover{border-color:#e66c25}.sub.selected{border-color:#e66c25;background:#fff3eb;color:#c95720}
+.single-rule{font-size:10px;color:#777;margin-bottom:10px}.single-rule b{color:#c95720}
+.reqhead{background:#fafafa;border-bottom:1px solid #e6e6e6;padding:11px 12px;display:flex;align-items:center;justify-content:space-between}.reqtitle{font-size:12px;font-weight:700}.reqmeta{font-size:9px;color:#999;margin-top:3px}.requirement{border:1px solid #ddd;border-radius:8px;overflow:hidden}
+.reqbody{padding:12px}.fields{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}.field label{display:block;font-size:9px;color:#777;margin-bottom:4px}input,select,textarea{width:100%;border:1px solid #d9d9d9;border-radius:5px;padding:7px;font-size:10px;background:#fff;color:#333}textarea{min-height:46px;resize:vertical}
+.detailtable{width:100%;border-collapse:collapse}.detailtable th{background:#f8f8f8;color:#777;font-size:9px;text-align:left;border:1px solid #e2e2e2;padding:7px}.detailtable td{border:1px solid #e2e2e2;padding:6px;vertical-align:top}
+.btn{border:1px solid #ddd;background:#fff;border-radius:5px;padding:7px 10px;font-size:10px;font-weight:700;cursor:pointer}.orange{background:#f26f21;color:#fff;border-color:#f26f21}.danger{color:#b33;border-color:#e7cccc}.actions{display:flex;gap:6px}
+.addrow{text-align:right;margin-top:8px}.totalbar{display:flex;justify-content:flex-end;background:#f7f7f7;padding:9px;margin-top:10px;font-size:10px;color:#777}.totalbar b{color:#222;margin-left:6px}
+.context{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.metric{border:1px solid #e1e1e1;border-radius:7px;padding:10px}.metric .label{font-size:9px;line-height:1.3}.metric .value{font-size:13px;margin-top:4px}
+.summary{width:100%;border-collapse:collapse}.summary th,.summary td{border:1px solid #e2e2e2;padding:8px;font-size:10px}.summary th{background:#f8f8f8;color:#777;text-align:left}
+.footer{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid #eee}.toast{display:none;position:fixed;right:20px;bottom:20px;background:#333;color:#fff;padding:10px 14px;border-radius:5px;font-size:11px;z-index:99}
+.review{display:none;position:fixed;inset:0;background:rgba(20,30,45,.38);z-index:100;overflow:auto;padding:30px 0}.modal{width:980px;max-width:94%;margin:auto;background:#fff;border-radius:10px;overflow:hidden}.modalhead{padding:15px 18px;border-bottom:1px solid #e5e5e5;display:flex;justify-content:space-between}.modalhead h2{font-size:16px;margin:0 0 4px}.modalhead p{font-size:10px;color:#888;margin:0}.modalbody{padding:17px}.alert{background:#fff8ee;border:1px solid #f0dfc0;border-left:3px solid #e66c25;padding:10px;font-size:10px;color:#765d38;margin-bottom:12px}.reviewtable{width:100%;border-collapse:collapse}.reviewtable th,.reviewtable td{border:1px solid #e2e2e2;padding:7px;font-size:9px;text-align:left;vertical-align:top}.reviewtable th{background:#f8f8f8;color:#777}.modalfoot{padding:12px 17px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:1000px){.header,.nav{padding-left:20px;padding-right:20px}.page{width:94%}.headergrid{grid-template-columns:repeat(2,1fr)}.subgrid{grid-template-columns:repeat(2,1fr)}.context{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<header class="header"><div class="logo">Indian<br>Oil</div><div class="brand"><b>SERPL Budget Portal</b><span>South Eastern Region Pipelines</span></div><div class="user"><strong>location.user</strong>LOCATION_USER</div><button class="sign">Sign out</button></header>
+<nav class="nav"><span>Home</span><span class="active">Create</span><span>Approve</span><span>Reports</span></nav>
+
+<main class="page">
+<div class="head"><div><h1>Create Budget Request</h1><p>One request is prepared for one Cost Centre, one category and one sub-head at a time.</p></div><div class="status">Draft</div></div>
+
+<section class="card">
+<div class="eyebrow">BUDGET HEADER</div>
+<div class="headergrid">
+<div><div class="label">Region</div><div class="value">SERPL</div></div><div><div class="label">Base</div><div class="value">Paradip</div></div><div><div class="label">Operating Location</div><div class="value">PHBPL_Paradip SBM</div></div><div><div class="label">Company Code</div><div class="value">9280</div></div>
+<div><div class="label">Pipeline</div><div class="value">PHBPL</div></div><div><div class="label">Cost Centre</div><div class="value">P5142</div></div><div><div class="label">Financial Year</div><div class="value">RBE 2026-27 / BE 2027-28</div></div><div><div class="label">Request Number</div><div class="value" style="color:#999">Generated on Submit</div></div>
+</div>
+<div class="info"><b>Important:</b> In one submission, the user can select <b>only ONE category and ONE sub-head</b>. A separate request must be created for another category or another sub-head.</div>
+</section>
+
+<section class="card">
+<div class="sectiontitle">1. Select Budget Category</div>
+<div class="single-rule">Choose one category only. Once selected, the other categories are temporarily disabled for this request.</div>
+<div class="catrow">
+<div class="category" id="cat-rm" onclick="selectCategory('rm')"><div class="icon">🔧</div><div class="catname">R&M</div><div class="catdesc">Repair & Maintenance requirements, works and services.</div></div>
+<div class="category" id="cat-chemical" onclick="selectCategory('chemical')"><div class="icon">🧪</div><div class="catname">Chemical</div><div class="catdesc">Chemical consumption, treatment and related requirements.</div></div>
+<div class="category" id="cat-fuel" onclick="selectCategory('fuel')"><div class="icon">⚡</div><div class="catname">Power & Fuel</div><div class="catdesc">Power, electricity, fuel and energy requirements.</div></div>
+</div>
+<div id="subArea" style="display:none" class="subarea"></div>
+</section>
+
+<section class="card">
+<div class="sectiontitle">2. Financial Position</div>
+<div class="context">
+<div class="metric"><div class="label">Actual FY 2025-26</div><div class="value">₹120.50 L</div></div>
+<div class="metric"><div class="label">Expense Till Q1 FY 2026-27</div><div class="value">₹32.40 L</div></div>
+<div class="metric"><div class="label">Approved BE FY 2026-27</div><div class="value">₹105.00 L</div></div>
+<div class="metric"><div class="label">RBE FY 2026-27</div><div class="value">₹112.00 L</div></div>
+<div class="metric"><div class="label">Proposed BE FY 2027-28</div><div class="value" id="grand">₹0.00 L</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="sectiontitle">3. Requirement Details</div>
+<div id="requirement"><div style="text-align:center;padding:28px;color:#999;border:1px dashed #ddd;border-radius:6px;font-size:10px">Select one category and one sub-head above. Its requirement section will appear here.</div></div>
+</section>
+
+<section class="card">
+<div class="sectiontitle">4. Request Summary</div>
+<table class="summary"><thead><tr><th>Category</th><th>Sub-head</th><th>No. of Items</th><th>Proposed BE FY 2027-28</th></tr></thead><tbody id="summary"><tr><td colspan="4" style="text-align:center;color:#999">No selection yet</td></tr></tbody></table>
+</section>
+
+<section class="card">
+<div class="sectiontitle">5. Review & Submit</div>
+<div style="background:#f8f8f8;border-left:3px solid #e66c25;padding:10px;font-size:10px;color:#777;margin-bottom:10px">
+<b>Before submission:</b> verify the category, sub-head, budget head, amount, reference and justification. If another category/sub-head is required, save this request and create a separate request.
+</div>
+<div class="footer"><button class="btn" onclick="toast('Draft saved')">Save Draft</button><button class="btn orange" onclick="openReview()">Review & Submit</button></div>
+</section>
+</main>
+
+<div class="review" id="review">
+<div class="modal">
+<div class="modalhead"><div><h2>Review & Submit</h2><p>Final read-only review of this single-category, single-sub-head request.</p></div><button class="btn" onclick="closeReview()">Close</button></div>
+<div class="modalbody">
+<div class="alert"><b>Request rule:</b> This request contains only one category and one sub-head. A separate Request Number will be created for another category or sub-head.</div>
+<table class="reviewtable" style="margin-bottom:12px"><tr><th>Cost Centre</th><th>Financial Year</th><th>Category</th><th>Sub-head</th><th>Proposed BE</th></tr><tr><td>P5142</td><td>BE 2027-28</td><td id="rvCat">—</td><td id="rvSub">—</td><td id="rvAmt">₹0.00 L</td></tr></table>
+<table class="reviewtable"><thead><tr><th>Budget Head</th><th>Item Description</th><th>Work Type</th><th>Recurring / One-Time</th><th>Reference</th><th>Justification</th><th>Proposed BE</th></tr></thead><tbody id="reviewRows"></tbody></table>
+</div>
+<div class="modalfoot"><button class="btn" onclick="closeReview()">Back to Edit</button><button class="btn orange" onclick="submitDemo()">Confirm & Submit</button></div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+let category=null,sub=null;
+const subheads={
+rm:['Civil','Mechanical','Electrical','Instrumentation','Pipeline / Mainline','Buildings','Stations','Other R&M'],
+chemical:['Corrosion Inhibitor','Biocide','Water Treatment','Other Chemical'],
+fuel:['Electricity','Diesel','HSD','Other Power & Fuel']
+};
+const names={rm:'R&M',chemical:'Chemical',fuel:'Power & Fuel'};
+
+function selectCategory(k){
+ category=k;sub=null;
+ document.querySelectorAll('.category').forEach(x=>x.classList.remove('active'));
+ document.getElementById('cat-'+k).classList.add('active');
+ document.querySelectorAll('.category').forEach(x=>{if(!x.classList.contains('active')){x.style.opacity='.42';x.style.cursor='not-allowed'}});
+ const area=document.getElementById('subArea');area.style.display='block';
+ area.innerHTML='<div class="single-rule"><b>'+names[k]+'</b> — Select ONE sub-head only. Selecting another sub-head will replace the current selection.</div><div class="subgrid">'+subheads[k].map(s=>`<div class="sub" onclick="selectSub(this,'${s.replace(/'/g,"\\'")}')">${s}</div>`).join('')+'</div><div style="margin-top:10px;text-align:center"><button class="btn" onclick="toast('Add More can be enabled by master-data rules')">+ Add More</button></div>';
+ render();
+}
+function selectSub(el,s){
+ sub=s;
+ document.querySelectorAll('.sub').forEach(x=>x.classList.remove('selected'));
+ el.classList.add('selected');
+ render();
+}
+function render(){
+ const box=document.getElementById('requirement');
+ if(!category||!sub){box.innerHTML='<div style="text-align:center;padding:28px;color:#999;border:1px dashed #ddd;border-radius:6px;font-size:10px">Select one category and one sub-head above. Its requirement section will appear here.</div>';updateSummary();return}
+ box.innerHTML='<div class="requirement"><div class="reqhead"><div><div class="reqtitle">'+names[category]+' → '+sub+'</div><div class="reqmeta">Only one sub-head is permitted in this request.</div></div><span class="lock">ONE SECTION ONLY</span></div><div class="reqbody">'+
+ (category==='rm'?rmFields():otherFields())+
+ '<div style="overflow:auto"><table class="detailtable"><thead><tr>'+
+ (category==='rm'?'<th>S.No.</th><th>Fund / Budget Head</th><th>Item Description</th><th>Actual FY 2025-26</th><th>RBE FY 2026-27</th><th>Material</th><th>Service</th><th>Total Proposed BE</th><th>Work Type</th><th>Recurring / One-Time</th><th>Reference Taken From</th><th>Justification</th><th>Action</th>':'<th>S.No.</th><th>Budget Head</th><th>Item Description</th><th>UOM</th><th>Quantity</th><th>Rate</th><th>Actual FY 2025-26</th><th>RBE FY 2026-27</th><th>Proposed BE</th><th>Reference / Basis</th><th>Justification</th><th>Action</th>')+
+ '</tr></thead><tbody id="rows">'+(category==='rm'?rmRow(1):otherRow(1))+'</tbody></table></div>'+
+ '<div class="addrow"><button class="btn orange" onclick="addRow()">+ Add Requirement Row</button></div><div class="totalbar">Sub-head Proposed BE: <b id="total">₹0.00 L</b></div></div></div>';
+ calc();
+}
+function rmFields(){return '<div class="fields"><div class="field"><label>Actual FY 2025-26</label><input value="120.50" readonly></div><div class="field"><label>RBE FY 2026-27</label><input value="112.00" readonly></div><div class="field"><label>Approved BE FY 2026-27</label><input value="105.00" readonly></div><div class="field"><label>Category</label><input value="R&M" readonly></div><div class="field"><label>Sub-head</label><input value="'+sub+'" readonly></div></div>'}
+function otherFields(){return '<div class="fields"><div class="field"><label>Actual FY 2025-26</label><input value="0.00" readonly></div><div class="field"><label>RBE FY 2026-27</label><input value="0.00" readonly></div><div class="field"><label>Approved BE FY 2026-27</label><input value="0.00" readonly></div><div class="field"><label>Category</label><input value="'+names[category]+'" readonly></div><div class="field"><label>Sub-head</label><input value="'+sub+'" readonly></div></div>'}
+function rmRow(n){return '<tr><td>'+n+'</td><td><select><option>1103 – Township Maintenance</option><option>1106 – Others - Civil</option><option>Applicable Budget Head</option></select></td><td><textarea>Repair and maintenance of existing facility</textarea></td><td><input value="120.50" readonly></td><td><input value="112.00" readonly></td><td><input type="number" value="18.00" oninput="calc()"></td><td><input type="number" value="22.00" oninput="calc()"></td><td><input id="lineTotal" value="40.00" readonly></td><td><select><option>Existing Work Order</option><option>Existing Service Contract</option><option>Previous Year Requirement</option><option>Inspection / Audit Observation</option><option>Statutory / Regulatory Requirement</option><option>New Requirement</option></select></td><td><select><option>Recurring</option><option>One-Time</option></select></td><td><textarea>WO-2026-014 / Estimate</textarea></td><td><textarea>Required to maintain safe and reliable operation; estimate based on existing requirement.</textarea></td><td><button class="btn danger" onclick="delRow(this)">Delete</button></td></tr>'}
+function otherRow(n){return '<tr><td>'+n+'</td><td><select><option>Applicable Budget Head</option><option>Other</option></select></td><td><textarea>Sample '+names[category]+' requirement</textarea></td><td><input value="'+(category==='chemical'?'KL':'KWh')+'"></td><td><input type="number" value="100"></td><td><input type="number" value="250"></td><td><input value="0.00" readonly></td><td><input value="0.00" readonly></td><td><input type="number" value="25.00" oninput="calc()"></td><td><textarea>Consumption trend / estimate</textarea></td><td><textarea>Required for uninterrupted operations.</textarea></td><td><button class="btn danger" onclick="delRow(this)">Delete</button></td></tr>'}
+function addRow(){const tb=document.getElementById('rows');const n=tb.rows.length+1;tb.insertAdjacentHTML('beforeend',category==='rm'?rmRow(n):otherRow(n));calc()}
+function delRow(b){const tb=b.closest('tbody');if(tb.rows.length===1){toast('At least one requirement row is required.');return}b.closest('tr').remove();[...tb.rows].forEach((r,i)=>r.cells[0].textContent=i+1);calc()}
+function calc(){
+ const tb=document.getElementById('rows');if(!tb)return;let total=0;
+ [...tb.rows].forEach(r=>{let v=category==='rm'?parseFloat(r.cells[5].querySelector('input').value||0)+parseFloat(r.cells[6].querySelector('input').value||0):parseFloat(r.cells[8].querySelector('input').value||0);total+=v;if(category==='rm')r.cells[7].querySelector('input').value=v.toFixed(2)});
+ document.getElementById('total').textContent='₹'+total.toFixed(2)+' L';document.getElementById('grand').textContent='₹'+total.toFixed(2)+' L';updateSummary()
+}
+function updateSummary(){
+ if(!category||!sub){document.getElementById('summary').innerHTML='<tr><td colspan="4" style="text-align:center;color:#999">No selection yet</td></tr>';return}
+ let total=parseFloat((document.getElementById('total')?.textContent||'₹0').replace(/[₹ L]/g,''))||0;
+ document.getElementById('summary').innerHTML='<tr><td>'+names[category]+'</td><td>'+sub+'</td><td>'+((document.getElementById('rows')?.rows.length)||0)+'</td><td>₹'+total.toFixed(2)+' L</td></tr><tr style="font-weight:700;background:#fafafa"><td colspan="2">TOTAL</td><td>'+((document.getElementById('rows')?.rows.length)||0)+'</td><td>₹'+total.toFixed(2)+' L</td></tr>'
+}
+function openReview(){
+ if(!category||!sub){toast('Select one category and one sub-head first.');return}
+ const tb=document.getElementById('rows');let rows='';
+ [...tb.rows].forEach(r=>{
+   if(category==='rm')rows+='<tr><td>'+r.cells[1].querySelector('select').value+'</td><td>'+r.cells[2].querySelector('textarea').value+'</td><td>'+r.cells[8].querySelector('select').value+'</td><td>'+r.cells[9].querySelector('select').value+'</td><td>'+r.cells[10].querySelector('textarea').value+'</td><td>'+r.cells[11].querySelector('textarea').value+'</td><td>₹'+r.cells[7].querySelector('input').value+' L</td></tr>';
+   else rows+='<tr><td>'+r.cells[1].querySelector('select').value+'</td><td>'+r.cells[2].querySelector('textarea').value+'</td><td>—</td><td>—</td><td>'+r.cells[9].querySelector('textarea').value+'</td><td>'+r.cells[10].querySelector('textarea').value+'</td><td>₹'+r.cells[8].querySelector('input').value+' L</td></tr>'
+ });
+ document.getElementById('rvCat').textContent=names[category];document.getElementById('rvSub').textContent=sub;document.getElementById('rvAmt').textContent=document.getElementById('total').textContent;document.getElementById('reviewRows').innerHTML=rows;document.getElementById('review').style.display='block'
+}
+function closeReview(){document.getElementById('review').style.display='none'}
+function submitDemo(){toast('Demo submission: one Request Number would be generated here.');closeReview()}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+</script>
+</body>
+</html>
